@@ -1,15 +1,16 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SqliteService } from './sqlite.service';
-import { delay } from 'rxjs';
+
+const LS_KEY = 'tcg_tutorial_completed';
 
 export interface TutorialStep {
   id: string;
   title: string;
   text: string;
-  targetId?: string;       // ID del DOM a iluminar
-  route?: string;          // Ruta en la que debe suceder
-  characterImg: string;    // 'intrucciones.png' o 'intrucciones 2.png'
+  targetId?: string;
+  route?: string;
+  characterImg: string;
   charPosition: 'left' | 'right';
 }
 
@@ -22,7 +23,8 @@ export class TutorialService {
 
   public readonly isActive = signal<boolean>(false);
   public readonly currentStepIndex = signal<number>(0);
-  
+  public readonly currentStep = signal<TutorialStep | null>(null);
+
   public readonly steps: TutorialStep[] = [
     {
       id: 'welcome',
@@ -34,7 +36,7 @@ export class TutorialService {
     {
       id: 'dash-play',
       title: 'ZONA DE DESPLIEGUE',
-      text: 'Desde aquí accedes a los combates. "Online" te emparejará contra duelistas reales (requiere conexión Supabase), mientras que "Entrenamiento" es combate local contra la IA.',
+      text: '"JUGAR ONLINE" te empareja contra duelistas reales via Supabase. "ENTRENAMIENTO" es combate contra la IA local, sin necesidad de conexión.',
       targetId: 'tut-btn-online',
       characterImg: 'intrucciones.png',
       charPosition: 'right'
@@ -42,7 +44,7 @@ export class TutorialService {
     {
       id: 'dash-nav',
       title: 'SISTEMAS TÁCTICOS',
-      text: 'A tu izquierda tienes los módulos clave: gestión de mazos, tu colección completa y el registro de tu desempeño táctico (Leaderboard/Historial).',
+      text: 'El menú lateral te da acceso a tu Colección de cartas, el Constructor de Mazos, el Leaderboard global y el Manual del Duelista.',
       targetId: 'tut-btn-collection',
       characterImg: 'intrucciones2.png',
       charPosition: 'left'
@@ -50,7 +52,7 @@ export class TutorialService {
     {
       id: 'collection-intro',
       title: 'ENCICLOPEDIA DE CARTAS',
-      text: 'Esta es tu colección. Cada carta tiene un Costo de Energía, Daño (ATK) y Vida (HP). Las cartas Raras y Épicas pueden tener Habilidades especiales (como Curación o Veneno).',
+      text: 'Aquí está tu arsenal. Cada carta tiene HP, ATK y DEF. Las de rareza Épica y Legendaria poseen Habilidades especiales como Curación o Veneno.',
       route: '/cards',
       targetId: 'tut-collection-grid',
       characterImg: 'intrucciones.png',
@@ -59,7 +61,7 @@ export class TutorialService {
     {
       id: 'deck-intro',
       title: 'CONSTRUCTOR DE MAZOS',
-      text: 'Aquí forjas tu estrategia. Un mazo legal debe contener exactamente 20 cartas. Deberás balancear monstruos baratos con cartas pesadas para no quedarte sin energía.',
+      text: 'Forja tu estrategia aquí. Tu mazo debe tener exactamente 20 cartas. Balancea tropas económicas con unidades pesadas para no quedarte sin energía.',
       route: '/deck',
       targetId: 'tut-deck-list',
       characterImg: 'intrucciones2.png',
@@ -67,63 +69,40 @@ export class TutorialService {
     },
     {
       id: 'combat-rules',
-      title: 'REGLAS DE ENFRENTAMIENTO',
-      text: 'En combate, usarás energía para invocar tropas. Puedes atacar directamente al rival si no tiene defensas. La debilidad elemental (ej. Fuego vs Planta) causa el doble de daño.',
+      title: 'REGLAS DE COMBATE',
+      text: 'En batalla usas energía para invocar unidades. Si el rival no tiene defensas, atacas directamente su HP. La debilidad elemental (Fuego vs Planta, etc.) causa el doble de daño.',
       route: '/dashboard',
-      targetId: 'tut-btn-manual',
+      targetId: 'tut-btn-online',
       characterImg: 'intrucciones.png',
       charPosition: 'right'
     },
     {
       id: 'farewell',
       title: 'PREPARACIÓN COMPLETADA',
-      text: 'El entrenamiento ha concluido. Modifica tu mazo y entra a la Arena. ¡Demuestra tu valor estratégico, duelista!',
+      text: '¡El campo de batalla te espera, duelista! Construye tu mazo, desafía a otros jugadores online y escala en el Leaderboard. ¡Demuestra tu valor táctico!',
       characterImg: 'intrucciones2.png',
       charPosition: 'left'
     }
   ];
 
-  public currentStep = signal<TutorialStep | null>(null);
-
   constructor() { }
 
   /**
-   * Revisa si el usuario ya hizo el tutorial. Si no, lo inicia.
-   * Solo muestra el tutorial cuando hay confirmación EXPLÍCITA de que es nuevo usuario.
-   * En caso de cualquier error o DB no lista → NO mostrar (seguro para usuarios existentes).
+   * Verificación INMEDIATA usando localStorage.
+   * localStorage es síncrono y siempre disponible — no depende de SQLite.
+   * Solo muestra el tutorial si NUNCA se ha marcado como completado.
    */
-  public async checkAndStartTutorial(): Promise<void> {
-    // Esperar a que SQLite esté listo (hasta 5 segundos)
-    let attempts = 0;
-    while (!this.sqlite.isReady() && attempts < 50) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      attempts++;
+  public checkAndStartTutorial(): void {
+    // Verificación instantánea via localStorage (sin async, sin timing issues)
+    const alreadyDone = localStorage.getItem(LS_KEY);
+    if (alreadyDone === 'true') {
+      return; // Usuario existente → no molestar
     }
 
-    // Si SQLite nunca estuvo listo, abortamos silenciosamente
-    if (!this.sqlite.isReady()) {
-      console.warn('[TutorialService] SQLite no disponible, omitiendo tutorial.');
-      return;
-    }
-
-    try {
-      const res = this.sqlite.query(`SELECT data FROM kv_store WHERE id = 'tutorial_completed'`);
-      // Solo mostramos si explícitamente NO existe el registro (usuario nuevo)
-      if (res.length > 0) {
-        // Existe el registro → usuario existente, no mostrar
-        return;
-      }
-      // No existe el registro → usuario nuevo, mostrar tutorial
-    } catch (e) {
-      // Error de BD → asumir usuario existente, NO mostrar
-      console.warn('[TutorialService] Error al verificar tutorial, omitiendo.', e);
-      return;
-    }
-    
-    // Solo llega aquí si es nuevo usuario confirmado
+    // Usuario nuevo → mostrar tras breve pausa cinematográfica
     setTimeout(() => {
       this.startTutorial();
-    }, 1200);
+    }, 1500);
   }
 
   public startTutorial(): void {
@@ -145,13 +124,21 @@ export class TutorialService {
   public finishTutorial(): void {
     this.isActive.set(false);
     this.currentStep.set(null);
+
+    // Guardar en localStorage (inmediato, siempre funciona)
+    localStorage.setItem(LS_KEY, 'true');
+
+    // Guardar también en SQLite como respaldo (fire and forget)
     try {
-      this.sqlite.execute(
-        `INSERT OR REPLACE INTO kv_store (id, data) VALUES ('tutorial_completed', 'true')`
-      );
+      if (this.sqlite.isReady()) {
+        this.sqlite.execute(
+          `INSERT OR REPLACE INTO kv_store (id, data) VALUES ('tutorial_completed', 'true')`
+        );
+      }
     } catch (e) {
-      console.error('[TutorialService] Fallo al guardar progreso del tutorial', e);
+      console.warn('[TutorialService] SQLite backup save failed (localStorage already saved)', e);
     }
+
     this.router.navigate(['/dashboard'], { replaceUrl: true });
   }
 
