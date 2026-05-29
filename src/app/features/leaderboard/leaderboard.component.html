@@ -1,0 +1,125 @@
+<div class="leaderboard-universe">
+
+  <!-- TOP HUD -->
+  <header class="lab-top-hud">
+    <div class="hud-left">
+      <button class="btn-tactical-back" routerLink="/">◀ SALIR</button>
+      <div class="hud-titles">
+        <h1 class="glow-text-cyan">LEADERBOARD GLOBAL</h1>
+        <span class="hud-version">RANKING COMPETITIVO ONLINE</span>
+      </div>
+    </div>
+    
+    <div class="sync-status" [class.online]="playerStore.connectionMode() === 'online'">
+      <span>{{ playerStore.connectionMode() | uppercase }}</span>
+      <span *ngIf="playerStore.connectionMode() === 'online'" class="latency">{{ playerStore.avgSupabaseLatency() }}ms</span>
+    </div>
+  </header>
+
+  <!-- LOADER -->
+  <div *ngIf="leaderboardService.isLoading()" class="hologram-loader">
+    <div class="loader-ring"></div>
+    <p class="loader-text">SINCRONIZANDO RANKING GLOBAL...</p>
+  </div>
+
+  <div class="leaderboard-workspace" *ngIf="!leaderboardService.isLoading()">
+    
+    <!-- PODIUM ZONE (Top 1, 2, 3) -->
+    <div class="podium-zone" *ngIf="podiumPlayers.length > 0">
+      
+      <!-- TOP 2 -->
+      <div class="podium-card rank-2" *ngIf="podiumPlayers[1] as p2">
+        <div class="podium-badge">2</div>
+        <div class="podium-avatar">{{ p2.username.charAt(0) | uppercase }}</div>
+        <h2 class="podium-name">{{ p2.username }}</h2>
+        <div class="podium-stats">
+          <span class="p-wr">{{ p2.winRate }}% WR</span>
+          <span class="p-matches">{{ p2.victories }}V - {{ p2.defeats }}D</span>
+        </div>
+      </div>
+
+      <!-- TOP 1 -->
+      <div class="podium-card rank-1" *ngIf="podiumPlayers[0] as p1">
+        <div class="crown-icon"></div>
+        <div class="podium-badge">1</div>
+        <div class="podium-avatar">{{ p1.username.charAt(0) | uppercase }}</div>
+        <h2 class="podium-name">{{ p1.username }}</h2>
+        <div class="podium-stats">
+          <span class="p-wr">{{ p1.winRate }}% WR</span>
+          <span class="p-matches">{{ p1.victories }}V - {{ p1.defeats }}D</span>
+        </div>
+      </div>
+
+      <!-- TOP 3 -->
+      <div class="podium-card rank-3" *ngIf="podiumPlayers[2] as p3">
+        <div class="podium-badge">3</div>
+        <div class="podium-avatar">{{ p3.username.charAt(0) | uppercase }}</div>
+        <h2 class="podium-name">{{ p3.username }}</h2>
+        <div class="podium-stats">
+          <span class="p-wr">{{ p3.winRate }}% WR</span>
+          <span class="p-matches">{{ p3.victories }}V - {{ p3.defeats }}D</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LADDER LIST (Rank 4+) -->
+    <div class="ladder-zone">
+      <div class="ladder-header">
+        <div class="lh-rank">RANGO</div>
+        <div class="lh-player">JUGADOR</div>
+        <div class="lh-matches">PARTIDAS</div>
+        <div class="lh-winrate">WIN RATE</div>
+      </div>
+
+      <div class="ladder-list">
+        <div class="ladder-row" *ngFor="let p of ladderPlayers" [class]="getRankBadgeClass(p.rank)">
+          <div class="lr-rank">
+            <span class="rank-badge">{{ p.rank }}</span>
+          </div>
+          <div class="lr-player">
+            <span class="lr-lvl">LVL {{ p.level }}</span>
+            <span class="lr-name">{{ p.username }}</span>
+          </div>
+          <div class="lr-matches">
+            <span class="text-green">{{ p.victories }}V</span>
+            <span class="text-neutral">-</span>
+            <span class="text-red">{{ p.defeats }}D</span>
+          </div>
+          <div class="lr-winrate">
+            <div class="wr-bar-bg">
+              <div class="wr-bar-fill" [style.width.%]="p.winRate"></div>
+            </div>
+            <span class="wr-text">{{ p.winRate }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY FOOTER (Current User) -->
+  <div class="sticky-user-row" *ngIf="currentUserEntry as me">
+    <div class="sur-label">TU POSICIÓN GLOBAL</div>
+    <div class="ladder-row my-row" [class]="getRankBadgeClass(me.rank)">
+      <div class="lr-rank">
+        <span class="rank-badge">{{ me.rank }}</span>
+      </div>
+      <div class="lr-player">
+        <span class="lr-lvl">LVL {{ me.level }}</span>
+        <span class="lr-name">{{ me.username }}</span>
+      </div>
+      <div class="lr-matches">
+        <span class="text-green">{{ me.victories }}V</span>
+        <span class="text-neutral">-</span>
+        <span class="text-red">{{ me.defeats }}D</span>
+      </div>
+      <div class="lr-winrate">
+        <div class="wr-bar-bg">
+          <div class="wr-bar-fill" [style.width.%]="me.winRate"></div>
+        </div>
+        <span class="wr-text">{{ me.winRate }}%</span>
+      </div>
+    </div>
+  </div>
+
+</div>

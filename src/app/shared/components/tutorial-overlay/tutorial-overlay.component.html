@@ -1,0 +1,36 @@
+<div class="tutorial-wrapper" *ngIf="tutorialService.isActive() && tutorialService.currentStep() as step">
+  
+  <!-- Overlay oscuro principal que bloquea clicks -->
+  <div class="tutorial-backdrop"></div>
+
+  <!-- El hueco (Spotlight) -->
+  <div class="spotlight-hole" [ngStyle]="spotlightStyle()" [class.hidden]="!step.targetId"></div>
+
+  <!-- Render del Personaje Animado -->
+  <div class="character-container" [ngClass]="step.charPosition">
+    <!-- Fade out and in when src changes by binding key to src -->
+    <img [src]="'assets/backgrounds/' + step.characterImg" 
+         class="holographic-character" 
+         alt="AI Guide">
+  </div>
+
+  <!-- Caja de Diálogo Táctica (HUD) -->
+  <div class="dialogue-hud" [ngClass]="step.charPosition === 'left' ? 'hud-right' : 'hud-left'">
+    <div class="dialogue-header">
+      <div class="status-dot"></div>
+      <span class="system-title">SISTEMA TÁCTICO // {{ step.title }}</span>
+    </div>
+    
+    <div class="dialogue-body">
+      <p class="typed-text">{{ typedText() }}<span class="cursor">_</span></p>
+    </div>
+
+    <div class="dialogue-footer">
+      <button class="btn-skip" (click)="skip()">OMITIR SISTEMA</button>
+      <button class="btn-next" (click)="next()">
+        SIGUIENTE <span class="arrow">>></span>
+      </button>
+    </div>
+  </div>
+
+</div>

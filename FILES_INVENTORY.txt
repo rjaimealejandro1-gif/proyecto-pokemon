@@ -1,0 +1,530 @@
+﻿POKÉMON TCG ANGULAR PROJECT - COMPLETE FILES INVENTORY
+=====================================================
+
+PROJECT STATISTICS:
+- Total TypeScript Files: 40
+- Total Lines of Code: ~7000 (estimated)
+- Framework: Angular 21.2
+- State Management: Signals (not RxJS)
+- Database: Supabase + localStorage
+
+═══════════════════════════════════════════════════════════════
+
+CORE FILES (4):
+
+1. app.ts (12 lines)
+   - Root component
+   - Imports: RouterOutlet
+   - Status: Working ✓
+
+2. app.config.ts (13 lines)
+   - Application configuration
+   - Providers: provideBrowserGlobalErrorListeners, provideRouter, provideHttpClient
+   - Status: Working ✓
+
+3. app.routes.ts (43 lines)
+   - Routing configuration
+   - Lazy-loaded components
+   - Routes: /auth, /dashboard, /battle, /cards, /deck, /history
+   - Status: Working ✓
+
+4. main.ts (6 lines)
+   - Bootstrap entry point
+   - Calls bootstrapApplication(App, appConfig)
+   - Status: Working ✓
+
+═══════════════════════════════════════════════════════════════
+
+STATE MANAGEMENT (4 stores, all using Angular Signals):
+
+1. game.store.ts (33 lines) - src/app/core/state/
+   Signals:
+   - _state: MatchState
+   - _isAuthenticated: boolean
+   - _activeMatchId: string | null
+   
+   Methods:
+   - setAppState(state)
+   - setAuthenticated(auth)
+   - setActiveMatch(matchId)
+   
+   Status: Working ✓
+
+2. player.store.ts (701 lines) - src/app/core/state/ ⚠️ CRITICAL
+   Signals:
+   - _profile: UserProfile | null
+   - _decks: Deck[]
+   - _selectedDeckId: string | null ← BUG: Set too late
+   - _collection: Card[]
+   - _connectionMode: 'online' | 'local'
+   - _isSynced: boolean
+   - _isLoading: boolean ← BUG: Not set false until all PokéAPI complete
+   
+   Key Methods:
+   - initializeLocalState() - reads localStorage
+   - loadUserData() - async loads Supabase/fallback (LINES 260-287 BROKEN)
+   - saveDeck() - sync to localStorage + Supabase
+   - createNewDeck() - new empty deck
+   - deleteDeck() - remove deck
+   - selectDeck() - switch active deck
+   - logout() - clear all state
+   
+   Status: Partially broken ❌
+   Issue: Race condition in loadUserData()
+
+3. battle.store.ts (287 lines) - src/app/core/state/
+   Signals:
+   - _battle: Battle | null
+   - _isAiGame: boolean
+   - _battleLoadError: string | null
+   
+   Shortcuts (computed):
+   - battleState, player1, player2, activePlayerId
+   - currentPhase, turnNumber, winnerId
+   
+   Methods:
+   - initializeBattle() - validates deck, fetches cards, creates battle
+   - initializeMockBattle() - fallback (unused)
+   - updatePlayerHp() - change health
+   - updatePlayerEnergy() - change mana
+   - setPhase() - change phase
+   
+   Status: Working ✓
+   (Receives null deck due to PlayerStore bug)
+
+4. ui.store.ts (33 lines) - src/app/core/state/
+   Signals:
+   - _loading: boolean
+   - _theme: 'dark' | 'light'
+   - _modalActive: string | null
+   
+   Status: Working ✓
+
+═══════════════════════════════════════════════════════════════
+
+SERVICES (4 files):
+
+1. supabase.service.ts (76 lines) - src/app/core/services/
+   Purpose: Initialize and provide Supabase client
+   Methods:
+   - initSupabase() - create client with URL + key
+   - get client() - return SupabaseClient
+   - get auth() - return auth API
+   - get db() - return database API
+   - joinRealtimeRoom() - create realtime subscription
+   
+   Credentials (hardcoded):
+   - URL: https://klmngjtldhslatmqjcbf.supabase.co
+   - Key: sb_publishable_1LrwE8fOhYNdl-4pAtkZ_w_mo-PXcC5
+   
+   Status: Working ✓
+
+2. pokeapi.service.ts (155 lines) - src/app/core/services/
+   Purpose: Fetch and transform Pokémon cards from PokéAPI
+   Methods:
+   - getPokemonListAsCards() - fetch multiple, parallel
+   - getPokemonAsCard() - fetch single
+   - transformToCard() - apply game balance formula
+   
+   Cache: Memory only (Map<string, Card>)
+   Formula: Stat budget scaling based on rarity
+   
+   Issues:
+   - No retry logic
+   - Memory cache lost on refresh
+   - No persistent caching
+   
+   Status: Working ✓ (but could be optimized)
+
+3. storage.service.ts (52 lines) - src/app/core/services/
+   Purpose: localStorage wrapper
+   Methods:
+   - setItem() - JSON.stringify + localStorage
+   - getItem() - localStorage + JSON.parse
+   - removeItem() - delete from storage
+   - clear() - wipe all
+   
+   Keys used:
+   - poke_profile
+   - poke_decks
+   - poke_selected_deck_id
+   
+   Status: Working ✓
+
+4. logger.service.ts (19 lines) - src/app/core/services/
+   Purpose: Styled console logging
+   Methods:
+   - log() - blue logging
+   - warn() - orange warning
+   - error() - red error
+   
+   Status: Working ✓
+
+═══════════════════════════════════════════════════════════════
+
+GAME ENGINE SERVICES (5 files):
+
+1. game-manager.service.ts (75 lines) - src/app/core/engine/
+   Purpose: Orchestrate game flow
+   Methods:
+   - startSinglePlayerGame() - AI vs player (DOESN'T CHECK isLoading) ⚠️
+   - enterMatchmaking() - placeholder for multiplayer
+   - exitToMenu() - cleanup and navigate back
+   
+   Issue: Line 27-35 doesn't wait for playerStore.isLoading() == false
+   
+   Status: Partially broken ⚠️
+
+2. battle-manager.service.ts (201 lines) - src/app/core/engine/
+   Purpose: Execute battle actions
+   Methods:
+   - summonCard() - invoke card from hand
+   - attackCard() - card vs card attack
+   - attackPlayerDirectly() - attack HP if no defending cards
+   
+   Validation: Checks phase, energy, ready status
+   State: Proper immutability pattern
+   
+   Status: Working ✓
+
+3. turn-manager.service.ts (130 lines) - src/app/core/engine/
+   Purpose: Phase management and turn logic
+   Methods:
+   - nextPhase() - FSM transition
+   - endTurn() - switch active player
+   - startNewTurn() - draw card, restore energy
+   - triggerGameOver() - end battle
+   
+   FSM: DRAW_PHASE → MAIN_PHASE → ATTACK_PHASE → END_PHASE → (switch) → DRAW_PHASE
+   
+   Features:
+   - Energy increases per turn (max 10)
+   - Card drawing with 7-card hand limit
+   - Empty deck detection
+   
+   Status: Working ✓
+
+4. damage-calculator.service.ts (53 lines) - src/app/core/engine/
+   Purpose: Calculate damage between cards
+   Methods:
+   - calculateScaledHp() - HP * level
+   - calculateScaledAttack() - ATK * rarity multiplier
+   - calculateFinalDamage() - full formula with type advantage
+   
+   Formula:
+   1. scaledAttack = baseAttack * rarityMultiplier
+   2. defenseReduction = defense * 0.5
+   3. baseDamage = max(10, scaledAttack - defenseReduction)
+   4. finalDamage = baseDamage * typeMultiplier
+   5. finalDamage = clamp(0, finalDamage, 1500)
+   
+   Rarity multipliers:
+   - COMMON: 1.0
+   - RARE: 1.2
+   - EPIC: 1.5
+   - LEGENDARY: 2.0
+   
+   Status: Working ✓
+
+5. card-effects-engine.service.ts (39 lines) - src/app/core/engine/
+   Purpose: Execute card special abilities
+   Methods:
+   - triggerAbility() - trigger special effect
+   
+   Current: STUBS ONLY (logs ability name but no effect)
+   Examples: Llamarada, Hidrobomba, Pesadilla
+   
+   Status: Not implemented ❌
+
+═══════════════════════════════════════════════════════════════
+
+MODELS (5 interfaces):
+
+1. card.model.ts (20 lines)
+   Interface Card:
+   - id, name, imageUrl
+   - type, hp, maxHp, attack, defense
+   - rarity, cost, level
+   - ability, description
+   - isReadyToAttack, ownerId
+
+2. deck.model.ts (9 lines)
+   Interface Deck:
+   - id, name, userId
+   - cards: Card[]
+   - createdAt
+
+3. player.model.ts (14 lines)
+   Interface Player:
+   - id, username, hp, maxHp
+   - energy, maxEnergy
+   - deck[], hand[], field[], discardPile[]
+
+4. battle.model.ts (12 lines)
+   Interface Battle:
+   - matchId
+   - player1, player2
+   - activePlayerId
+   - phase, turnNumber, winnerId
+
+5. match.model.ts (12 lines)
+   Interface Match:
+   - id, player1Id, player2Id
+   - status, gameState, winnerId
+   - createdAt, updatedAt
+
+═══════════════════════════════════════════════════════════════
+
+ENUMS (4 files):
+
+1. battle-phase.enum.ts (7 lines)
+   Enum BattlePhase:
+   - DRAW_PHASE
+   - MAIN_PHASE
+   - ATTACK_PHASE
+   - END_PHASE
+   - GAME_OVER
+
+2. pokemon-type.enum.ts (20 lines)
+   Enum PokemonType (18 types):
+   - NORMAL, FIRE, WATER, GRASS, ELECTRIC
+   - ICE, FIGHTING, POISON, GROUND, FLYING
+   - PSYCHIC, BUG, ROCK, GHOST, DRAGON
+   - DARK, STEEL, FAIRY
+
+3. card-rarity.enum.ts (6 lines)
+   Enum CardRarity:
+   - COMMON (1 energy)
+   - RARE (2 energy)
+   - EPIC (4 energy)
+   - LEGENDARY (6 energy)
+
+4. match-state.enum.ts (6 lines)
+   Enum MatchState:
+   - MENU
+   - MATCHMAKING
+   - PLAYING
+   - FINISHED
+
+═══════════════════════════════════════════════════════════════
+
+CONSTANTS (3 files):
+
+1. battle.constants.ts (65 lines)
+   TYPE_ADVANTAGES: Record<PokemonType, Partial<Record<PokemonType, number>>>
+   - 18x18 type effectiveness matrix
+   - 2.0x super effective
+   - 0.5x not very effective
+   - 1.0x neutral
+   - 0.0x immune
+   
+   Function:
+   - getEffectivenessMultiplier(attacker, defender)
+
+2. rarity.constants.ts (15 lines)
+   RARITY_COSTS:
+   - COMMON: 1, RARE: 2, EPIC: 4, LEGENDARY: 6
+   
+   RARITY_MULTIPLIERS:
+   - COMMON: 1.0, RARE: 1.2, EPIC: 1.5, LEGENDARY: 2.0
+
+3. game.constants.ts (8 lines)
+   GAME_CONSTANTS:
+   - INITIAL_HP: 4000
+   - INITIAL_ENERGY: 1
+   - MAX_ENERGY: 10
+   - MAX_FIELD_CARDS: 5
+   - MAX_HAND_CARDS: 7
+   - DECK_SIZE: 20
+
+═══════════════════════════════════════════════════════════════
+
+FEATURE COMPONENTS (6 files):
+
+1. dashboard.component.ts (915 lines) - src/app/features/dashboard/
+   Responsibility: Main menu + deck selector modal
+   Features:
+   - Welcome section with stats
+   - 4 menu cards (Practice AI, Online, Deck Builder, Collection)
+   - Deck selector modal (holographic Pokédex design)
+   - Deck preview and stats
+   
+   Signals:
+   - isDeckSelectorOpen
+   - selectedGameMode
+   - deckToSelectId
+   - selectedDeckInModal (computed)
+   - selectedDeckStats (computed)
+   - selectedDeckPreviewCards (computed)
+   
+   Key Method:
+   - launchBattle() - validates 20 cards, calls gameManager
+   
+   Issue: Allows battle launch while playerStore.isLoading()
+   
+   Status: Partially working ⚠️
+
+2. battle.component.ts (880 lines) - src/app/features/battle/
+   Responsibility: Battle arena UI
+   Features:
+   - Opponent HUD (top)
+   - Battle board (center)
+   - Player HUD (bottom)
+   - Phase indicator
+   - Error display
+   - Loading spinner
+   
+   Display:
+   - Player field (5 slots)
+   - Opponent field (5 slots)
+   - Hand cards (clickable)
+   - Deck info
+   - Energy/HP bars
+   
+   Status: Working ✓
+
+3. deck.component.ts (1526 lines) - src/app/features/deck/
+   Responsibility: Deck builder + collection manager
+   Features:
+   - Multi-deck selector (dropdown)
+   - Create/delete deck
+   - Add/remove cards from deck
+   - Collection browser with filters
+   - Rarity breakdown
+   
+   Signals:
+   - activeDeckCards
+   - groupedDeckCards
+   - filteredAndSortedCards
+   
+   Status: Working ✓
+   (Could improve: quantity validation)
+
+4. cards.component.ts (789 lines) - src/app/features/cards/
+   Responsibility: Card encyclopedia
+   Features:
+   - Card grid display
+   - Search by name
+   - Filter by type
+   - Sort by: name, cost, HP, ATK, DEF
+   - Inspect panel for details
+   
+   Status: Working ✓
+
+5. auth.component.ts (443 lines) - src/app/features/auth/
+   Responsibility: Authentication UI
+   Features:
+   - Login form
+   - Register form
+   - Guest mode (offline)
+   - Error messages
+   - Loading spinner
+   
+   Signals:
+   - isLoginMode
+   - email, password, username
+   - isLoading, errorMessage
+   
+   Status: Working ✓
+
+6. history.component.ts (?) - src/app/features/history/
+   Responsibility: Battle history + profile stats
+   Features: (not examined)
+   Status: Unknown
+
+═══════════════════════════════════════════════════════════════
+
+SHARED COMPONENTS (2 files):
+
+1. layout.component.ts (488 lines) - src/app/shared/components/layout/
+   Responsibility: Main layout container
+   Features:
+   - Header with logo
+   - Navigation links
+   - User profile widget
+   - Mobile responsive menu
+   - Network status indicator
+   - Logout button
+   
+   Status: Working ✓
+
+2. card-view.component.ts (?) - src/app/shared/components/card-view/
+   Responsibility: Reusable card display
+   Features: (not examined)
+   Status: Assumed working
+
+═══════════════════════════════════════════════════════════════
+
+ENVIRONMENT CONFIG (2 files):
+
+1. environment.ts (6 lines) - src/environments/
+   production: false
+   supabaseUrl: 'https://klmngjtldhslatmqjcbf.supabase.co'
+   supabaseKey: 'sb_publishable_1LrwE8fOhYNdl-4pAtkZ_w_mo-PXcC5'
+   pokeApiUrl: 'https://pokeapi.co/api/v2'
+
+2. environment.prod.ts (?) - src/environments/
+   (Assumed same or with production flags)
+
+═══════════════════════════════════════════════════════════════
+
+SUMMARY BY STATUS:
+
+WORKING (✓): 32 files
+- All core files
+- All models, enums, constants
+- Most services
+- Most components
+
+PARTIALLY WORKING (⚠️): 3 files
+- player.store.ts - race condition
+- game-manager.service.ts - doesn't check isLoading
+- dashboard.component.ts - allows battle during load
+
+NOT IMPLEMENTED (❌): 1 file
+- card-effects-engine.service.ts - stubs only
+
+UNKNOWN: 4 files
+- history.component.ts
+- card-view.component.ts (assumed working)
+- environment.prod.ts
+- tsconfig files
+
+═══════════════════════════════════════════════════════════════
+
+CRITICAL ISSUES TO FIX:
+
+1. PlayerStore.loadUserData() race condition (CRITICAL)
+   File: src/app/core/state/player.store.ts
+   Lines: 260-287
+   Fix: Convert subscriptions to Promise.all()
+   Effort: 30-45 minutes
+
+2. GameManagerService doesn't wait for loading (HIGH)
+   File: src/app/core/engine/game-manager.service.ts
+   Lines: 27-35
+   Fix: Add isLoading() check with retry
+   Effort: 10-15 minutes
+
+3. Dashboard allows battle during load (MEDIUM)
+   File: src/app/features/dashboard/dashboard.component.ts
+   Lines: 162-170 (button)
+   Fix: Add [disabled]=\"playerStore.isLoading()\"
+   Effort: 5-10 minutes
+
+4. Card effects not implemented (LOW - Phase 2)
+   File: src/app/core/engine/card-effects-engine.service.ts
+   Fix: Implement actual effects
+   Effort: 1-2 hours
+
+═══════════════════════════════════════════════════════════════
+
+TOTAL EFFORT ESTIMATE:
+- Fix critical race condition: 4-5 hours (analysis + impl + test)
+- Fix GameManager waiting: 1 hour
+- Fix Dashboard UI: 1 hour
+- Testing all scenarios: 2-3 hours
+
+TOTAL TO PRODUCTION: 8-10 hours of work
+
+═══════════════════════════════════════════════════════════════

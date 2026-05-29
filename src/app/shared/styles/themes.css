@@ -1,0 +1,667 @@
+:root {
+  /* Paleta de Colores Principal - Pokédex Red Mode */
+  --color-primary: #f05050;          /* Rojo Pokédex — más claro y cálido */
+  --color-primary-hover: #f47070;    /* Rojo Claro Neón */
+  --color-primary-dark: #c93535;     /* Rojo Medio */
+  --color-primary-deep: #8b2020;     /* Rojo Profundo */
+  --color-primary-rgb: 240, 80, 80;
+  
+  --bg-dark: #6b1818;                /* Rojo visible — base de la app */
+  --bg-darker: #501010;              /* Rojo oscuro — paneles y fondos */
+  --bg-card: rgba(140, 35, 35, 0.58); /* Glassmorphism rojo cálido */
+  --bg-card-hover: rgba(165, 50, 50, 0.72);
+  
+  --text-primary: #ffffff;           /* Blanco Puro */
+  --text-secondary: #ffb3b3;         /* Rojo Claro Highlight */
+  --text-muted: #c07070;             /* Rojo Vino Medio */
+
+  /* Colores de Acento Eléctrico / Energía (Amarillo ONLY as Micro-Highlight) */
+  --color-energy: #ffea00;           /* Amarillo neón eléctrico para Hp/Energía */
+  --color-energy-light: #fff59d;
+  --color-energy-glow: rgba(255, 234, 0, 0.55);
+  
+  /* Acento Tecnológico / Telemetría */
+  --color-tech: #f05050;             /* Rojo medio secundario */
+  --color-tech-light: #ffb3b3;
+  --color-tech-dark: #c93535;
+
+  /* Rarezas - Temática Holográfica Roja */
+  --color-legendary: #ffea00;        /* Oro para legendarias */
+  --color-epic: #ff1744;             /* Rojo Neón Épico */
+  --color-rare: #ff7f7a;             /* Carmín Claro Raro */
+  --color-common: #8b0000;           /* Rojo común */
+
+  /* Fuentes Tipográficas */
+  --font-title: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Efectos Glassmorphism y Bordes Iluminados Rojos */
+  --glass-panel: rgba(100, 22, 22, 0.65);
+  --glass-border: rgba(240, 80, 80, 0.35);
+  --glass-border-hover: rgba(240, 90, 90, 0.65);
+  --glass-shadow: 0 10px 40px 0 rgba(50, 5, 5, 0.9), inset 0 0 20px rgba(240, 80, 80, 0.2);
+  --glass-blur: blur(16px);
+
+  /* Animaciones y Transiciones */
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Radios */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-xl: 36px;
+}
+
+/* Fondo Dinámico Vortex: Pokédex Arena Premium AAA */
+.bg-vortex {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  background: radial-gradient(circle at 50% 50%, #8c2020 0%, #501010 55%, #3d0a0a 100%);
+  overflow: hidden;
+}
+
+/* Cuadrícula tecnológica roja neón */
+.bg-vortex::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 23, 68, 0.09) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(255, 23, 68, 0.09) 1.5px, transparent 1.5px);
+  background-size: 60px 60px;
+  background-position: center center;
+  pointer-events: none;
+}
+
+/* Gradientes líquidos dinámicos en tonos cálidos de rojo fuego */
+.bg-vortex::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(240, 80, 80, 0.45) 0%, transparent 45%),
+    radial-gradient(circle at 80% 30%, rgba(160, 40, 40, 0.42) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(220, 60, 60, 0.30) 0%, transparent 45%);
+  animation: liquidShift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+  filter: blur(20px);
+}
+
+/* Partículas luminosas flotantes en rojo brillante */
+.bg-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -9;
+  background-image: 
+    radial-gradient(circle, rgba(255, 23, 68, 0.3) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255, 92, 82, 0.22) 2.5px, transparent 2.5px);
+  background-size: 180px 180px, 240px 240px;
+  background-position: 0 0, 70px 120px;
+  animation: floatingParticles 35s linear infinite;
+  opacity: 0.85;
+}
+
+/* Siluetas de Pokéballs en SVG inline combinadas con escáner holográfico */
+.bg-pokedex-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 50% 50%, transparent 25%, rgba(29, 0, 0, 0.9) 100%),
+    repeating-linear-gradient(0deg, rgba(255, 67, 54, 0.04) 0px, rgba(255, 67, 54, 0.04) 1.5px, transparent 1.5px, transparent 3px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='120' height='120' opacity='0.035'%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='%23ff4336' stroke-width='1.5'/%3E%3Cline x1='5' y1='50' x2='95' y2='50' stroke='%23ff4336' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%233b0000' stroke='%23ff4336' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='50' r='5' fill='none' stroke='%23ff1744' stroke-width='1'/%3E%3C/svg%3E") repeat;
+  background-position: center;
+  pointer-events: none;
+  z-index: -8;
+}
+
+/* Animación del movimiento cinematográfico líquido */
+@keyframes liquidShift {
+  0% {
+    transform: rotate(0deg) scale(1) translate(0, 0);
+  }
+  50% {
+    transform: rotate(6deg) scale(1.1) translate(15px, -25px);
+  }
+  100% {
+    transform: rotate(-6deg) scale(1) translate(-15px, 25px);
+  }
+}
+
+/* Animación de partículas flotando */
+@keyframes floatingParticles {
+  0% {
+    background-position: 0px 0px, 50px 100px;
+  }
+  100% {
+    background-position: 150px -300px, 250px -200px;
+  }
+}
+
+/* Clases de Estilo Premium Reutilizables */
+.glass-card {
+  background: var(--glass-panel);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+  transition: all var(--transition-normal);
+}
+
+.glass-card:hover {
+  border-color: var(--glass-border-hover);
+  box-shadow: 0 12px 40px 0 rgba(255, 23, 68, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Efecto de Carta Holográfica Premium Roja */
+.holo-effect {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.holo-effect::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 30%,
+    rgba(255, 23, 68, 0.28) 40%,
+    rgba(255, 127, 122, 0.25) 50%,
+    rgba(255, 234, 0, 0.15) 60%,
+    transparent 100%
+  );
+  transition: all var(--transition-slow);
+  pointer-events: none;
+}
+
+.holo-effect:hover::after {
+  transform: translate(50%, 50%);
+}
+
+/* Resplandor Rojo Neón */
+.red-neon-glow {
+  box-shadow: 0 0 20px rgba(255, 23, 68, 0.45), inset 0 0 12px rgba(255, 23, 68, 0.25);
+  border: 1px solid rgba(255, 23, 68, 0.6) !important;
+}
+
+.red-neon-glow:hover {
+  box-shadow: 0 0 30px rgba(255, 23, 68, 0.7), inset 0 0 18px rgba(255, 23, 68, 0.45);
+  transform: translateY(-4px);
+}
+
+/* Botones Premium Estilo Pokédex Gaming */
+.btn-premium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  padding: 12px 24px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4);
+  transition: all var(--transition-fast);
+}
+
+.btn-premium:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
+  box-shadow: 0 6px 20px rgba(255, 23, 68, 0.65), 0 0 12px var(--color-primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-premium:active {
+  transform: translateY(1px);
+}
+
+.btn-premium-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(139, 0, 0, 0.25);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 92, 82, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 12px 24px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-premium-secondary:hover {
+  background: rgba(139, 0, 0, 0.45);
+  border-color: rgba(255, 92, 82, 0.55);
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Scrollbar Premium Pokédex */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 23, 68, 0.45);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* ==========================================================================
+   SISTEMA GLOBAL DE CARGA - POKÉDEX & ARENA SPINNER
+   ========================================================================== */
+.pokeball-spinner {
+  width: 70px;
+  height: 70px;
+  border: 5px solid var(--text-primary);
+  border-radius: 50%;
+  position: relative;
+  animation: spinPoke 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+  box-shadow: 0 0 20px rgba(255, 23, 68, 0.6);
+  margin: 0 auto;
+}
+
+.pokeball-spinner::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--text-primary);
+  transform: translateY(-50%);
+}
+
+.pokeball-spinner::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: var(--bg-darker);
+  border: 4px solid var(--text-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+.loading-text {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(255, 23, 68, 0.7);
+  animation: pulseText 1.5s infinite alternate;
+  text-align: center;
+}
+
+.scan-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary-hover), transparent);
+  animation: scanLaser 3.5s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes spinPoke {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseText {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+@keyframes scanLaser {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   ESTADOS SEMÁNTICOS ENTERPRISE — UX CRÍTICO
+   (Verde = listo/online, Amarillo = warning/sync, Rojo = error/offline)
+   ========================================================================== */
+
+/* Estado READY / ONLINE / SYNCED */
+.status-ready {
+  color: #2ec4b6 !important;
+  text-shadow: 0 0 6px rgba(46, 196, 182, 0.4);
+}
+.badge-ready {
+  background: rgba(46, 196, 182, 0.12);
+  border: 1px solid rgba(46, 196, 182, 0.4);
+  color: #2ec4b6;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Estado SYNCING / WARNING / LOADING */
+.status-syncing {
+  color: #ffb703 !important;
+  text-shadow: 0 0 6px rgba(255, 183, 3, 0.4);
+}
+.badge-syncing {
+  background: rgba(255, 183, 3, 0.12);
+  border: 1px solid rgba(255, 183, 3, 0.4);
+  color: #ffb703;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  animation: statusPulse 1.5s ease-in-out infinite;
+}
+
+/* Estado ERROR / OFFLINE / CRITICAL */
+.status-error {
+  color: #ff4336 !important;
+  text-shadow: 0 0 6px rgba(255, 67, 54, 0.4);
+}
+.badge-error {
+  background: rgba(255, 67, 54, 0.12);
+  border: 1px solid rgba(255, 67, 54, 0.4);
+  color: #ff4336;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Estado INCOMPLETE / WARNING */
+.status-incomplete {
+  color: #ff9800 !important;
+  text-shadow: 0 0 6px rgba(255, 152, 0, 0.4);
+}
+.badge-incomplete {
+  background: rgba(255, 152, 0, 0.12);
+  border: 1px solid rgba(255, 152, 0, 0.4);
+  color: #ff9800;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Dot de estado animado (para indicadores de conexión y sync) */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-dot.dot-ready {
+  background: #2ec4b6;
+  box-shadow: 0 0 0 0 rgba(46, 196, 182, 0.7);
+  animation: pulseDotGreen 2s infinite;
+}
+
+.status-dot.dot-error {
+  background: #ff4336;
+  box-shadow: 0 0 0 0 rgba(255, 67, 54, 0.7);
+  animation: pulseDotRed 2s infinite;
+}
+
+.status-dot.dot-syncing {
+  background: #ffb703;
+  box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.7);
+  animation: pulseDotOrange 1.2s infinite;
+}
+
+.status-dot.dot-offline {
+  background: #ff7f7a;
+  box-shadow: 0 0 0 0 rgba(255, 127, 122, 0.5);
+  animation: pulseDotRed 3s infinite;
+}
+
+@keyframes pulseDotGreen {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 196, 182, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(46, 196, 182, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 196, 182, 0); }
+}
+
+@keyframes pulseDotOrange {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(255, 183, 3, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 183, 3, 0); }
+}
+
+@keyframes pulseDotRed {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 67, 54, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(255, 67, 54, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 67, 54, 0); }
+}
+
+/* ==========================================================================
+   CARTAS PREMIUM GRANDE — Modo Holográfico AAA
+   ========================================================================== */
+
+/* .holo-card-large: Cartas más grandes para el constructor y colección */
+.holo-card-large {
+  width: 140px !important;
+  min-width: 140px !important;
+  border-radius: var(--radius-md) !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.holo-card-large:hover {
+  transform: translateY(-8px) scale(1.04) !important;
+  box-shadow: 0 20px 40px rgba(255, 23, 68, 0.45), 0 0 20px rgba(255, 23, 68, 0.25) !important;
+  z-index: 10;
+}
+
+/* Previsualización miniatura de carta para el modal */
+.mini-card-thumb {
+  width: 60px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 23, 68, 0.3);
+  transition: all var(--transition-fast);
+  background: var(--bg-darker);
+}
+
+.mini-card-thumb:hover {
+  border-color: var(--color-primary-hover);
+  box-shadow: 0 0 12px rgba(255, 23, 68, 0.45);
+  transform: scale(1.08);
+}
+
+/* Stagger de entrada para thumbnails */
+.stagger-item {
+  animation: staggerFadeIn 0.4s ease-out both;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0.05s; }
+.stagger-item:nth-child(2) { animation-delay: 0.10s; }
+.stagger-item:nth-child(3) { animation-delay: 0.15s; }
+.stagger-item:nth-child(4) { animation-delay: 0.20s; }
+.stagger-item:nth-child(5) { animation-delay: 0.25s; }
+.stagger-item:nth-child(6) { animation-delay: 0.30s; }
+
+@keyframes staggerFadeIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==========================================================================
+   TOAST NOTIFICATIONS ENTERPRISE — Feedback sin alert() nativo
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(16px);
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  pointer-events: all;
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  min-width: 280px;
+  max-width: 380px;
+}
+
+.toast-item.toast-success {
+  background: rgba(20, 50, 47, 0.9);
+  border: 1px solid rgba(46, 196, 182, 0.5);
+  color: #2ec4b6;
+  box-shadow: 0 8px 24px rgba(46, 196, 182, 0.2);
+}
+
+.toast-item.toast-error {
+  background: rgba(60, 0, 0, 0.92);
+  border: 1px solid rgba(255, 67, 54, 0.6);
+  color: #ff7f7a;
+  box-shadow: 0 8px 24px rgba(255, 67, 54, 0.25);
+}
+
+.toast-item.toast-warning {
+  background: rgba(45, 30, 0, 0.92);
+  border: 1px solid rgba(255, 183, 3, 0.5);
+  color: #ffb703;
+  box-shadow: 0 8px 24px rgba(255, 183, 3, 0.15);
+}
+
+.toast-item.toast-info {
+  background: rgba(59, 0, 0, 0.92);
+  border: 1px solid rgba(255, 92, 82, 0.4);
+  color: var(--text-secondary);
+  box-shadow: 0 8px 24px rgba(255, 23, 68, 0.15);
+}
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(40px) scale(0.95); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to { opacity: 0; transform: translateX(40px) scale(0.95); }
+}
+
+.toast-item.dismissing {
+  animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+/* ==========================================================================
+   ANIMACIÓN GLOWING PREMIUM — Para el botón de combate
+   ========================================================================== */
+.animate-glowing-glow {
+  animation: glowingPulse 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowingPulse {
+  0%   { box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4), 0 0 8px rgba(255, 23, 68, 0.2); }
+  50%  { box-shadow: 0 6px 25px rgba(255, 23, 68, 0.65), 0 0 20px rgba(255, 23, 68, 0.4); }
+  100% { box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4), 0 0 8px rgba(255, 23, 68, 0.2); }
+}
+
+/* ==========================================================================
+   BORDER UTILITIES
+   ========================================================================== */
+.border-red {
+  border-color: rgba(255, 23, 68, 0.4) !important;
+  box-shadow: 0 0 15px rgba(255, 23, 68, 0.1) !important;
+}
+
+.border-gold-glow {
+  border: 1.5px solid rgba(255, 234, 0, 0.4) !important;
+  box-shadow: 0 0 20px rgba(255, 234, 0, 0.15) !important;
+}
+
+/* Flex utility */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

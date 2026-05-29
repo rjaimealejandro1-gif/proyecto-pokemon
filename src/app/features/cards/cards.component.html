@@ -1,0 +1,140 @@
+<div class="collection-universe" [class.inspect-active]="selectedCard() !== null">
+  
+  <!-- HUB SUPERIOR TÁCTICO (Filtros y Búsqueda) -->
+  <header class="collection-top-hud">
+    <div class="hud-brand">
+      <h1 class="glow-text-cyan">ENCICLOPEDIA</h1>
+      <span class="hud-version">BASE DE DATOS V1.0</span>
+    </div>
+
+    <div class="hud-controls">
+      <!-- Búsqueda -->
+      <div class="tactical-search">
+        <span class="scan-icon"></span>
+        <input 
+          type="text" 
+          placeholder="RASTREAR POKÉMON..." 
+          [value]="searchQuery()" 
+          (input)="onSearchChange($event)" 
+        />
+      </div>
+
+      <!-- Filtros LED Elementales -->
+      <div class="elemental-filters">
+        <button 
+          [class.active]="selectedType() === null" 
+          (click)="selectedType.set(null)"
+          class="led-btn base-led">
+          TODO
+        </button>
+        <button 
+          *ngFor="let type of availableTypes" 
+          [class.active]="selectedType() === type" 
+          (click)="selectedType.set(type)"
+          class="led-btn"
+          [style.--led-color]="getTypeColor(type)">
+          {{ getTypeNameSpanish(type) | uppercase }}
+        </button>
+      </div>
+
+      <!-- Ordenamiento Táctico -->
+      <div class="tactical-sort">
+        <select [value]="sortBy()" (change)="onSortChange($event)">
+          <option value="name">ALFABÉTICO</option>
+          <option value="cost">ENERGÍA</option>
+          <option value="hp">PUNTOS DE VIDA</option>
+          <option value="attack">ATAQUE (ATK)</option>
+          <option value="defense">DEFENSA (DEF)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loader Táctico -->
+  <div *ngIf="isLoading()" class="hologram-loader">
+    <div class="loader-ring"></div>
+    <p class="loader-text">SINCRONIZANDO CON POKÉDEX</p>
+  </div>
+
+  <!-- MAIN ÁLBUM (Grid de cartas protagonista) -->
+  <main class="album-grid-container" *ngIf="!isLoading()">
+    <div id="tut-collection-grid" class="album-grid">
+      <div class="hologram-card-slot" 
+           *ngFor="let card of filteredAndSortedCards()" 
+           (click)="selectCard(card)" 
+           [class.target-locked]="selectedCard()?.id === card.id">
+        <app-card-view [card]="card"></app-card-view>
+      </div>
+    </div>
+  </main>
+
+  <!-- INSPECTOR HOLOGRÁFICO LATERAL -->
+  <aside class="tactical-inspector" *ngIf="selectedCard() as card">
+    <div class="inspector-scanline"></div>
+    
+    <div class="inspector-header">
+      <h2 class="i-card-name">{{ card.name }}</h2>
+      <button class="btn-abort-inspect" (click)="selectedCard.set(null)">CIERRE</button>
+    </div>
+    
+    <div class="inspector-body">
+      <!-- Rarity / Level Header -->
+      <div class="i-tech-bar">
+        <div class="i-rarity-chip" [class]="card.rarity.toLowerCase()">
+          {{ getRarityName(card.rarity) | uppercase }}
+        </div>
+        <div class="i-level-chip">LVL {{ card.level }}</div>
+      </div>
+
+      <!-- Vista de la Carta en grande -->
+      <div class="i-card-projection">
+        <app-card-view [card]="card"></app-card-view>
+      </div>
+
+      <!-- Specs Técnicas -->
+      <div class="i-specs-module">
+        <h3 class="spec-title">ESPECIFICACIONES BASE</h3>
+        
+        <div class="spec-row hp-row">
+          <div class="spec-lbl-val">
+            <span class="s-lbl">INTEGRIDAD (HP)</span>
+            <span class="s-val text-green">{{ card.hp }} <span class="s-max">/ {{ card.maxHp }}</span></span>
+          </div>
+          <div class="s-bar-bg">
+            <div class="s-bar-fill green-fill" [style.width.%]="(card.hp / card.maxHp) * 100"></div>
+          </div>
+        </div>
+
+        <div class="spec-split">
+          <div class="spec-box atk-box">
+            <span class="sb-lbl">ATK</span>
+            <span class="sb-val">{{ card.attack }}</span>
+          </div>
+          <div class="spec-box def-box">
+            <span class="sb-lbl">DEF</span>
+            <span class="sb-val">{{ card.defense }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Habilidad Especial -->
+      <div class="i-ability-module" *ngIf="card.ability">
+        <h3 class="spec-title">SISTEMA OFENSIVO</h3>
+        <div class="ability-display">
+          <span class="a-name">{{ card.ability }}</span>
+          <p class="a-desc">{{ card.description }}</p>
+        </div>
+      </div>
+
+      <!-- Lore / Flavor Text -->
+      <div class="i-lore-module">
+        <div class="lore-box">
+          <span class="lore-lbl">DATOS DE ANÁLISIS:</span>
+          <p>Espécimen tipo {{ getTypeNameSpanish(card.type) | uppercase }} calibrado para combate táctico en la Arena. Factor de amenaza base: {{ card.hp + card.attack + card.defense }}.</p>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+</div>

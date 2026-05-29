@@ -1,0 +1,499 @@
+/* --- TCG CARDS COLLECTION STYLES (CINEMATIC HOLOGRAPHIC) --- */
+.collection-universe {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Utilities */
+.text-cyan { color: #00b4d8; }
+.text-green { color: #00ff80; }
+
+/* --- HUB SUPERIOR (TOP BAR) --- */
+.collection-top-hud {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(5,5,8,0.4) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 50;
+  flex-shrink: 0;
+}
+
+.hud-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.glow-text-cyan {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  margin: 0;
+  color: #00b4d8;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(0, 180, 216, 0.5);
+}
+
+.hud-version {
+  font-size: 10px;
+  color: #666;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Búsqueda Táctica */
+.tactical-search {
+  display: flex;
+  align-items: center;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(0, 180, 216, 0.3);
+  padding: 8px 15px;
+  border-radius: 4px;
+  width: 250px;
+  transition: all 0.3s;
+}
+
+.tactical-search:focus-within {
+  border-color: #00b4d8;
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
+}
+
+.scan-icon {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #00b4d8;
+  border-radius: 50%;
+  margin-right: 10px;
+  position: relative;
+}
+
+.scan-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 4px; height: 4px;
+  background: #00b4d8;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tactical-search input {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  width: 100%;
+  outline: none;
+}
+
+.tactical-search input::placeholder {
+  color: #555;
+}
+
+/* Filtros LED */
+.elemental-filters {
+  display: flex;
+  gap: 10px;
+}
+
+.led-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  position: relative;
+  padding: 5px 0;
+  transition: color 0.2s;
+}
+
+.led-btn:hover {
+  color: #fff;
+}
+
+.led-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--led-color, #00b4d8);
+  transition: width 0.3s;
+}
+
+.led-btn.active {
+  color: #fff;
+  text-shadow: 0 0 10px var(--led-color, #00b4d8);
+}
+
+.led-btn.active::after {
+  width: 100%;
+  box-shadow: 0 0 8px var(--led-color, #00b4d8);
+}
+
+/* Select de Ordenamiento */
+.tactical-sort select {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #00b4d8;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 8px 15px;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* --- MAIN ALBUM GRID --- */
+.album-grid-container {
+  flex: 1;
+  padding: 30px 40px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 10;
+}
+
+.album-grid-container::-webkit-scrollbar { width: 6px; }
+.album-grid-container::-webkit-scrollbar-thumb { background: rgba(0,180,216,0.3); border-radius: 3px; }
+
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 30px;
+  justify-content: center;
+}
+
+.hologram-card-slot {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  position: relative;
+  aspect-ratio: 63 / 88; /* Define altura basándose en el ancho del grid */
+  width: 100%;
+}
+
+.hologram-card-slot:hover {
+  transform: translateY(-8px) scale(1.03);
+}
+
+/* Cuando la carta es seleccionada */
+.hologram-card-slot.target-locked {
+  transform: translateY(-10px) scale(1.05);
+  filter: drop-shadow(0 15px 25px rgba(0, 180, 216, 0.4));
+  z-index: 20;
+}
+
+.hologram-card-slot.target-locked::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 4px;
+  background: #00b4d8;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #00b4d8;
+  opacity: 0.8;
+}
+
+/* --- INSPECTOR LATERAL TÁCTICO (HUD) --- */
+.tactical-inspector {
+  position: absolute;
+  top: 80px;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  background: linear-gradient(270deg, rgba(5,5,8,0.95) 0%, rgba(10,10,15,0.85) 100%);
+  border-left: 1px solid rgba(0, 180, 216, 0.2);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  animation: slideInHUD 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: -20px 0 50px rgba(0,0,0,0.8);
+}
+
+@keyframes slideInHUD {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.inspector-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 180, 216, 0.03) 2px,
+    rgba(0, 180, 216, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+.inspector-header {
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.i-card-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.btn-abort-inspect {
+  background: transparent;
+  border: 1px solid #ff1744;
+  color: #ff1744;
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.inspector-body {
+  flex: 1;
+  padding: 20px 30px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.inspector-body::-webkit-scrollbar { width: 4px; }
+.inspector-body::-webkit-scrollbar-thumb { background: rgba(0,180,216,0.3); }
+
+/* Rarity & Level */
+.i-tech-bar {
+  display: flex;
+  gap: 10px;
+}
+
+.i-rarity-chip, .i-level-chip {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  border: 1px solid transparent;
+}
+
+.i-level-chip {
+  border-color: rgba(255,255,255,0.2);
+  color: #aaa;
+}
+
+.legendary { color: #ffd166; border-color: #ffd166; background: rgba(255, 209, 102, 0.1); }
+.epic { color: #ff4d6d; border-color: #ff4d6d; background: rgba(255, 77, 109, 0.1); }
+.rare { color: #00b4d8; border-color: #00b4d8; background: rgba(0, 180, 216, 0.1); }
+.common { color: #aaa; border-color: #aaa; background: rgba(255, 255, 255, 0.05); }
+
+/* Card Display in Inspector */
+.i-card-projection {
+  display: flex;
+  justify-content: center;
+  margin: 10px auto;
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+  width: 250px;
+  aspect-ratio: 63 / 88;
+}
+
+/* Specs Block */
+.spec-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: #00b4d8;
+  letter-spacing: 2px;
+  margin: 0 0 15px 0;
+  border-bottom: 1px solid rgba(0, 180, 216, 0.2);
+  padding-bottom: 5px;
+}
+
+.spec-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 15px;
+}
+
+.spec-lbl-val {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Outfit', sans-serif;
+}
+
+.s-lbl { font-size: 11px; color: #888; font-weight: 700; letter-spacing: 1px; }
+.s-val { font-size: 14px; font-weight: 800; }
+.s-max { font-size: 10px; color: #666; }
+
+.s-bar-bg {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+.s-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+.green-fill {
+  background: #00ff80;
+  box-shadow: 0 0 8px rgba(0,255,128,0.5);
+}
+
+.spec-split {
+  display: flex;
+  gap: 15px;
+}
+
+.spec-box {
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.sb-lbl { font-size: 10px; color: #888; font-weight: 700; letter-spacing: 1px; }
+.sb-val { font-size: 20px; font-weight: 800; font-family: 'Outfit', sans-serif; }
+.atk-box .sb-val { color: #ff4d6d; }
+.def-box .sb-val { color: #00b4d8; }
+
+/* Ability Block */
+.ability-display {
+  background: rgba(0,0,0,0.3);
+  border-left: 2px solid #ffd166;
+  padding: 15px;
+}
+
+.a-name {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffd166;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.a-desc {
+  margin: 0;
+  font-size: 11px;
+  color: #aaa;
+  line-height: 1.5;
+}
+
+/* Lore */
+.lore-box {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.02),
+    rgba(255,255,255,0.02) 10px,
+    rgba(0,0,0,0) 10px,
+    rgba(0,0,0,0) 20px
+  );
+  padding: 15px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.lore-lbl {
+  font-size: 9px;
+  font-weight: 800;
+  color: #666;
+  letter-spacing: 2px;
+}
+
+.lore-box p {
+  margin: 5px 0 0 0;
+  font-size: 11px;
+  color: #888;
+  line-height: 1.4;
+}
+
+/* Loader */
+.hologram-loader {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.loader-ring {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(0, 180, 216, 0.1);
+  border-top: 2px solid #00b4d8;
+  border-right: 2px solid #00b4d8;
+  border-radius: 50%;
+  animation: radarSpin 1s linear infinite;
+}
+
+.loader-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #00b4d8;
+  letter-spacing: 3px;
+  font-weight: 800;
+  animation: pulseOpacity 1.5s infinite;
+}
+
+@keyframes radarSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Responsiveness adjustments (when inspector is active, grid should adjust slightly if needed, but flex handles it) */
+.collection-universe.inspect-active .album-grid-container {
+  padding-right: 430px; /* Leave space for absolute right inspector */
+}

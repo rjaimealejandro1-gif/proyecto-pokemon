@@ -1,0 +1,5 @@
+export enum BattlePhase {
+  CONNECTING = 'CONNECTING',
+  PLAYER_TURN = 'PLAYER_TURN',
+  GAME_OVER = 'GAME_OVER'
+}

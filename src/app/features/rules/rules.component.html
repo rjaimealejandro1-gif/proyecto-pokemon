@@ -1,0 +1,124 @@
+<div class="rules-container">
+  <!-- Fondo y overlays -->
+  <div class="bg-image"></div>
+  <div class="scanlines"></div>
+  <div class="glow-cyan"></div>
+
+  <!-- Botón de regreso -->
+  <button class="btn-back" routerLink="/dashboard">
+    <span class="icon">◀</span> VOLVER AL HUB
+  </button>
+
+  <div class="tactical-layout">
+    
+    <!-- Sidebar / Índice Lateral -->
+    <aside class="rules-sidebar">
+      <h2 class="sidebar-title">MANUAL DEL DUELISTA</h2>
+      <nav class="rules-nav">
+        <button 
+          *ngFor="let section of sections" 
+          class="nav-item" 
+          [class.active]="activeSection() === section.id"
+          (click)="scrollTo(section.id)">
+          {{ section.title }}
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="rules-content" #scrollContainer>
+      <div class="scroll-wrapper">
+        
+        <!-- 1. INTRODUCCIÓN -->
+        <section id="intro" class="rule-section">
+          <h3>1. INTRODUCCIÓN</h3>
+          <p>Bienvenido al Táctico. Este juego es un cruce estratégico entre el coleccionismo táctico de criaturas y un flujo de combate TCG clásico. Tu objetivo es dominar la Arena invocando tropas para reducir la vida (HP) del rival a 0 antes de que él destruya la tuya.</p>
+        </section>
+
+        <!-- 2. FASES DEL TURNO -->
+        <section id="turn-phases" class="rule-section">
+          <h3>2. FASES DEL TURNO</h3>
+          <p>Cada turno se divide en cuatro fases estrictas:</p>
+          <ul>
+            <li><strong>STANDBY (Espera):</strong> Recargas energía y robas una carta automáticamente.</li>
+            <li><strong>PLAYER TURN (Fase Principal):</strong> Juegas cartas desde tu mano al campo. Gastas energía.</li>
+            <li><strong>ATTACK (Fase de Batalla):</strong> Seleccionas tus tropas en el campo y declaras ataques contra las tropas enemigas o directamente al jugador si no hay defensas.</li>
+            <li><strong>END TURN (Fin):</strong> Cedes el turno al rival. El estado temporal se reinicia.</li>
+          </ul>
+        </section>
+
+        <!-- 3. INVOCACIÓN -->
+        <section id="summoning" class="rule-section">
+          <h3>3. INVOCACIÓN DE CARTAS</h3>
+          <p>Para jugar una carta desde tu mano al campo, debes pagar su <strong>Costo de Energía</strong>. Tienes un límite máximo de cartas permitidas en el campo simultáneamente. Una vez invocada, la carta puede atacar o defender de acuerdo a sus stats.</p>
+        </section>
+
+        <!-- 4. COMBATE -->
+        <section id="combat" class="rule-section">
+          <h3>4. COMBATE (ATK/DEF)</h3>
+          <p>El combate es matemático y táctico:</p>
+          <ul>
+            <li><strong>Daño a Criaturas:</strong> Cuando un atacante (ATK) golpea a un defensor (DEF), el defensor recibe daño. Si su salud (HP) baja a 0, la carta es destruida y va al cementerio.</li>
+            <li><strong>Daño Directo:</strong> Si el rival no tiene cartas en el campo, o posees habilidades de evasión, puedes golpear sus Puntos de Vida directamente.</li>
+          </ul>
+        </section>
+
+        <!-- 5. HABILIDADES -->
+        <section id="skills" class="rule-section">
+          <h3>5. HABILIDADES ESPECIALES</h3>
+          <p>Ciertas cartas de rarezas altas poseen habilidades pasivas o activas (Ej. STUN, POISON, HEAL). Los efectos pasivos se activan automáticamente cuando la carta está en el campo, alterando el flujo normal del combate.</p>
+        </section>
+
+        <!-- 6. MATRIZ ELEMENTAL -->
+        <section id="elements" class="rule-section">
+          <h3>6. MATRIZ ELEMENTAL</h3>
+          <p>El juego utiliza un sistema de tipos (Fuego, Agua, Planta, Eléctrico, etc.). Atacar a un tipo vulnerable otorga un multiplicador de daño x2 (Crítico). Atacar a una resistencia lo reduce a x0.5.</p>
+          
+          <div class="combat-matrix">
+            <div class="matrix-row">
+              <span class="badge fire">🔥 FUEGO</span> <span>x2 Daño contra</span> <span class="badge grass">🌿 PLANTA</span>
+            </div>
+            <div class="matrix-row">
+              <span class="badge water">💧 AGUA</span> <span>x2 Daño contra</span> <span class="badge fire">🔥 FUEGO</span>
+            </div>
+            <div class="matrix-row">
+              <span class="badge grass">🌿 PLANTA</span> <span>x2 Daño contra</span> <span class="badge water">💧 AGUA</span>
+            </div>
+            <div class="matrix-row">
+              <span class="badge electric">⚡ ELÉCTRICO</span> <span>x2 Daño contra</span> <span class="badge water">💧 AGUA</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. VICTORIA Y DERROTA -->
+        <section id="victory" class="rule-section">
+          <h3>7. CONDICIÓN DE VICTORIA</h3>
+          <p>Una partida termina inmediatamente cuando:</p>
+          <ul>
+            <li><strong>Por Daño:</strong> Los Puntos de Vida (HP) del jugador rival llegan a 0.</li>
+            <li><strong>Deck Exhaustion:</strong> Un jugador debe robar una carta al inicio de su turno y su mazo está vacío (pierde instantáneamente).</li>
+          </ul>
+        </section>
+
+        <!-- 8. MODOS Y RANKING -->
+        <section id="modes" class="rule-section">
+          <h3>8. MODOS Y RANKING</h3>
+          <p><strong>VS IA (Offline):</strong> Práctica local usando SQLite para guardar tus estadísticas localmente sin afectar tu rango global.</p>
+          <p><strong>ARENA (Online):</strong> Emparejamiento en tiempo real con Supabase. Necesitas mínimo 5 partidas completadas para aparecer clasificado en la Leaderboard oficial.</p>
+        </section>
+
+        <!-- 9. CONSEJOS TÁCTICOS -->
+        <section id="tips" class="rule-section">
+          <h3>9. CONSEJOS TÁCTICOS</h3>
+          <ul>
+            <li>No llenes tu mazo solo de cartas raras (alto costo). Un balance entre cartas baratas (Costo 1-2) y tanques (Costo 5+) es vital.</li>
+            <li>El tipo Normal no tiene fortalezas, pero raramente tiene debilidades mortales. Úsalo como defensa genérica.</li>
+            <li>Protege tus puntos de vida usando monstruos con alta DEFensión.</li>
+          </ul>
+          <br><br><br><br> <!-- Espacio extra para scroll -->
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>

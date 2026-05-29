@@ -1,0 +1,259 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #050508;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  color: #fff;
+}
+
+.rules-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: fade-in 0.8s forwards ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* FONDOS */
+.bg-image {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url('/assets/fondodecombate.png');
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.2) grayscale(0.5);
+  z-index: 0;
+}
+.scanlines {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+  background-size: 100% 4px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.glow-cyan {
+  position: absolute;
+  top: 0; right: 0;
+  width: 80vw; height: 100vh;
+  background: radial-gradient(circle at top right, rgba(0, 180, 216, 0.15), transparent 60%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* BACK BUTTON */
+.btn-back {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  z-index: 50;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(0, 180, 216, 0.3);
+  color: #00b4d8;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-back:hover {
+  background: rgba(0, 180, 216, 0.2);
+  transform: translateX(-5px);
+  box-shadow: 0 0 20px rgba(0, 180, 216, 0.4);
+}
+
+/* LAYOUT TÁCTICO */
+.tactical-layout {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  width: 90%;
+  max-width: 1400px;
+  height: 85%;
+  background: rgba(10, 10, 15, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(255,255,255,0.02);
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.rules-sidebar {
+  width: 320px;
+  background: rgba(0, 0, 0, 0.4);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-title {
+  padding: 30px;
+  margin: 0;
+  font-size: 14px;
+  color: #00b4d8;
+  letter-spacing: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.rules-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+.nav-item {
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  color: #888;
+  padding: 16px 30px;
+  text-align: left;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-item:hover {
+  background: rgba(255,255,255,0.02);
+  color: #fff;
+}
+.nav-item.active {
+  color: #00b4d8;
+  border-left-color: #00b4d8;
+  background: linear-gradient(90deg, rgba(0, 180, 216, 0.1), transparent);
+  text-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+}
+
+/* CONTENT */
+.rules-content {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  position: relative;
+}
+.rules-content::-webkit-scrollbar {
+  width: 8px;
+}
+.rules-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.rules-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 180, 216, 0.3);
+  border-radius: 4px;
+}
+
+.scroll-wrapper {
+  padding: 60px 80px;
+  max-width: 900px;
+}
+
+.rule-section {
+  margin-bottom: 80px;
+}
+.rule-section h3 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  position: relative;
+  display: inline-block;
+}
+.rule-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: -8px; left: 0;
+  width: 60px; height: 4px;
+  background: #00b4d8;
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);
+  border-radius: 2px;
+}
+.rule-section p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+.rule-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+.rule-section li {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #bbb;
+  margin-bottom: 12px;
+  padding-left: 24px;
+  position: relative;
+}
+.rule-section li::before {
+  content: '▸';
+  position: absolute;
+  left: 0; top: 0;
+  color: #00b4d8;
+}
+.rule-section li strong {
+  color: #fff;
+}
+
+/* COMBAT MATRIX */
+.combat-matrix {
+  margin-top: 30px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.matrix-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #888;
+}
+.badge {
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.badge.fire { background: #e63946; }
+.badge.water { background: #0077b6; }
+.badge.grass { background: #2a9d8f; }
+.badge.electric { background: #e9c46a; color: #000; }
+
+@media (max-width: 1000px) {
+  .tactical-layout { flex-direction: column; }
+  .rules-sidebar { width: 100%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .rules-nav { flex-direction: row; overflow-x: auto; padding: 10px; }
+  .nav-item { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; }
+  .nav-item.active { border-bottom-color: #00b4d8; background: linear-gradient(0deg, rgba(0, 180, 216, 0.1), transparent); }
+  .scroll-wrapper { padding: 40px; }
+}

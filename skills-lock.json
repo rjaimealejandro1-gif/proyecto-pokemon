@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "skills": {
+    "agent-browser": {
+      "source": "vercel-labs/agent-browser",
+      "sourceType": "github",
+      "skillPath": "skills/agent-browser/SKILL.md",
+      "computedHash": "228f87d57035100d9dc6efcfc05aafd4b6e3962adacaa04b8217ab2fadb15dc8"
+    },
+    "analogical-thinking": {
+      "source": "andurilcode/skills",
+      "sourceType": "github",
+      "skillPath": "skills/analogical-thinking/SKILL.md",
+      "computedHash": "098cadaac834a7f9f092b267bd8521924cc0503dd683c639c4c2b5e576691ee5"
+    },
+    "angular-architect": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/angular-architect/SKILL.md",
+      "computedHash": "bb4df7ee3ad3cc43838f417f2fc3e735470f82d78bbe0e5874bb12735d9ac302"
+    },
+    "angular-component": {
+      "source": "analogjs/angular-skills",
+      "sourceType": "github",
+      "skillPath": "skills/angular-component/SKILL.md",
+      "computedHash": "9d2fb6fbec5a8a9fd029e125194ba749b717b1fefef1cf5cd6f7a67d5b7bc364"
+    },
+    "angular-http": {
+      "source": "analogjs/angular-skills",
+      "sourceType": "github",
+      "skillPath": "skills/angular-http/SKILL.md",
+      "computedHash": "251aab8c4417ee6fc22187eaf9a88ae1a08613d201b65d1d0ec48ba4807f53eb"
+    },
+    "angular-routing": {
+      "source": "analogjs/angular-skills",
+      "sourceType": "github",
+      "skillPath": "skills/angular-routing/SKILL.md",
+      "computedHash": "cd02400200c70c1c8544ac6deb589269275fd33a7d6b93728bf8127cc2f0c71e"
+    },
+    "angular-signals": {
+      "source": "analogjs/angular-skills",
+      "sourceType": "github",
+      "skillPath": "skills/angular-signals/SKILL.md",
+      "computedHash": "3c81e0d5622c38ba42699895c50b3363130f2c2c6f74faf3402302e40f6ccbb9"
+    },
+    "blast-arquitecto": {
+      "source": "nabole05/mytrip-guru",
+      "sourceType": "github",
+      "skillPath": ".agent/skills/blast-arquitecto/SKILL.md",
+      "computedHash": "9ca50f62a723b2343c755f34a44d44f7b0aede0fafe6893ecb38e3c5e0824063"
+    },
+    "critical-thinking-logical-reasoning": {
+      "source": "sammcj/agentic-coding",
+      "sourceType": "github",
+      "skillPath": "skills/critical-thinking-logical-reasoning/SKILL.md",
+      "computedHash": "f4bea6fc01f51a2605194e39a2d23b8e35e95a0cb3557c465a94518ad97fc244"
+    },
+    "error-detective": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/error-detective/SKILL.md",
+      "computedHash": "0119e1bdd08f9bbe32cc2c9dcce23b9101e4b39e88dcf0d53ec859420a53c4ca"
+    },
+    "error-handling-ux": {
+      "source": "owl-listener/designer-skills",
+      "sourceType": "github",
+      "skillPath": "interaction-design/skills/error-handling-ux/SKILL.md",
+      "computedHash": "af75160dba9f75b17ad7defdbdbf4e21202ccf3a2b0709f90ad2741674fb74e2"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "516bd2154eb843a8240e43d5b285229129853114ad7075a5e141e1c08e408c84"
+    },
+    "infisical-api": {
+      "source": "infisical/ai-skills",
+      "sourceType": "github",
+      "skillPath": "skills/infisical-api/SKILL.md",
+      "computedHash": "c421d30f17f2e351fa7c211d601c3522eee4459f3a2cd745422139d8d3d2a78f"
+    },
+    "styles": {
+      "source": "android/skills",
+      "sourceType": "github",
+      "skillPath": "jetpack-compose/theming/styles/SKILL.md",
+      "computedHash": "85b5bb3dd756fb752d2071d7780158e7614db8a4519f6f5a36693bd5dd1684ff"
+    },
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/supabase-postgres-best-practices/SKILL.md",
+      "computedHash": "38fb49d3b57c46cba18b07a44254bd42c4c93903fda1d8cb683429615d32fec4"
+    },
+    "supabase-server": {
+      "source": "supabase/server",
+      "sourceType": "github",
+      "skillPath": "skills/supabase-server/SKILL.md",
+      "computedHash": "9200bfa8369cbba7055a914a5587e4dfed2147d3037cd655b9b95faf8aef8724"
+    },
+    "theme-detector": {
+      "source": "tradermonty/claude-trading-skills",
+      "sourceType": "github",
+      "skillPath": "skills/theme-detector/SKILL.md",
+      "computedHash": "3e6d9d97f6d9cdbbe5b07755d7eae9ad992c46bfa671041d5b4c0cb6bba3c132"
+    },
+    "ui-design": {
+      "source": "shajith003/awesome-claude-skills",
+      "sourceType": "github",
+      "skillPath": "ui-design/SKILL.md",
+      "computedHash": "44b4e7f6fe923ac179a556feeea1feecf10227fceca0fc890abf921895d6a665"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "6337038fe1fe6bbe1b9f252ab678ee575859190bab6f0f246f4061824eb40875"
+    },
+    "web-css": {
+      "source": "alphaonedev/openclaw-graph",
+      "sourceType": "github",
+      "skillPath": "skills/web-dev/web-css/SKILL.md",
+      "computedHash": "d9eb529f20290bb74e300348547d7110fc69f58f6def18b041cf3f81bf0bdd74"
+    },
+    "web-design": {
+      "source": "mintuz/claude-plugins",
+      "sourceType": "github",
+      "skillPath": "plugins/web/skills/web-design/SKILL.md",
+      "computedHash": "8d1e3df6c83eaa64a3ee8a46a9700c6b7a6a0932a87b73399b8f1f27b7c2ddff"
+    }
+  }
+}

@@ -1,0 +1,156 @@
+<div class="history-universe">
+
+  <!-- TOP HUD -->
+  <header class="lab-top-hud">
+    <div class="hud-left">
+      <button class="btn-tactical-back" routerLink="/">◀ SALIR</button>
+      <div class="hud-titles">
+        <h1 class="glow-text-cyan">REGISTRO DE COMBATE</h1>
+        <span class="hud-version">HOJA DE SERVICIO ONLINE</span>
+      </div>
+    </div>
+    
+    <div class="sync-status" [class.online]="playerStore.connectionMode() === 'online'">
+      <span>{{ playerStore.connectionMode() | uppercase }}</span>
+      <span *ngIf="playerStore.connectionMode() === 'online'" class="latency">{{ playerStore.avgSupabaseLatency() }}ms</span>
+    </div>
+  </header>
+
+  <!-- LOADER -->
+  <div *ngIf="historyService.isLoading()" class="hologram-loader">
+    <div class="loader-ring"></div>
+    <p class="loader-text">RECUPERANDO REGISTROS DE SUPABASE...</p>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="hub-workspace" *ngIf="!historyService.isLoading() && playerStore.profile() as user">
+    
+    <!-- PANEL IZQUIERDO: PERFIL TÁCTICO (40%) -->
+    <aside class="tactical-profile-zone">
+      
+      <div class="profile-card-tech">
+        <!-- Rango / Avatar -->
+        <div class="avatar-ring">
+          <div class="avatar-letter">{{ user.username.charAt(0) | uppercase }}</div>
+          <!-- Anillo de progreso de Nivel (simulado con gradiente) -->
+          <svg class="progress-ring" width="120" height="120">
+            <circle class="ring-bg" stroke="rgba(0,180,216,0.2)" stroke-width="6" fill="transparent" r="54" cx="60" cy="60"/>
+            <circle class="ring-fill" stroke="#00b4d8" stroke-width="6" fill="transparent" r="54" cx="60" cy="60" stroke-dasharray="339.292" [style.stroke-dashoffset]="339.292 - (339.292 * ((user.xp % 1000) / 1000))"/>
+          </svg>
+          <div class="level-badge">LVL {{ user.level }}</div>
+        </div>
+
+        <h2 class="profile-username">{{ user.username }}</h2>
+        <div class="profile-title">ENTRENADOR DE ÉLITE</div>
+
+        <!-- Mazo Activo -->
+        <div class="active-deck-display">
+          <span class="ad-lbl">ARSENAL PRINCIPAL</span>
+          <span class="ad-val">{{ getFavoriteDeckName() | uppercase }}</span>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="stats-tech-grid">
+          <div class="tech-stat-box neutral">
+            <span class="ts-lbl">PARTIDAS</span>
+            <span class="ts-val">{{ user.victories + user.defeats }}</span>
+          </div>
+          <div class="tech-stat-box winrate">
+            <span class="ts-lbl">WIN RATE</span>
+            <span class="ts-val">{{ playerStore.winRate() }}%</span>
+          </div>
+          <div class="tech-stat-box wins">
+            <span class="ts-lbl">VICTORIAS</span>
+            <span class="ts-val">{{ user.victories }}</span>
+          </div>
+          <div class="tech-stat-box losses">
+            <span class="ts-lbl">DERROTAS</span>
+            <span class="ts-val">{{ user.defeats }}</span>
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- PANEL DERECHO: HISTORIAL DE COMBATE (60%) -->
+    <main class="combat-log-zone">
+      <div class="zone-header">
+        <h3 class="zone-title">REGISTROS TÁCTICOS</h3>
+        <div class="history-tabs">
+          <button class="tab-btn" [class.active]="currentTab() === 'ONLINE'" (click)="setTab('ONLINE')">ONLINE</button>
+          <button class="tab-btn" [class.active]="currentTab() === 'OFFLINE'" (click)="setTab('OFFLINE')">OFFLINE (LOCAL)</button>
+        </div>
+      </div>
+
+      <!-- ONLINE TAB -->
+      <ng-container *ngIf="currentTab() === 'ONLINE'">
+        <!-- ESTADO VACÍO ÉPICO -->
+        <div class="epic-empty-state" *ngIf="historyService.matches().length === 0">
+          <div class="empty-icon"></div>
+          <h2 class="empty-title">SIN REGISTROS DE COMBATE</h2>
+          <p class="empty-desc">Tu hoja de servicio está en blanco. Ingresa a la Arena y forja tu leyenda en el sistema multijugador global.</p>
+          <button class="btn-epic-cta" routerLink="/battle">ENTRAR A LA ARENA</button>
+        </div>
+
+        <!-- LISTA DE PARTIDAS -->
+        <div class="matches-list" *ngIf="historyService.matches().length > 0">
+          <div class="match-row" *ngFor="let match of historyService.matches()" [class.victory]="match.result === 'VICTORIA'" [class.defeat]="match.result === 'DERROTA'" [class.draw]="match.result === 'EMPATE'">
+            
+            <div class="match-indicator"></div>
+            
+            <div class="match-main-info">
+              <div class="match-mode">{{ match.mode }}</div>
+              <div class="match-opponent">VS {{ match.opponentName | uppercase }}</div>
+            </div>
+            
+            <div class="match-details">
+              <div class="m-detail"><span class="m-lbl">TURNOS</span><span class="m-val">{{ match.turns }}</span></div>
+              <div class="m-detail"><span class="m-lbl">FECHA</span><span class="m-val">{{ match.date | date:'dd/MM/yyyy HH:mm' }}</span></div>
+            </div>
+
+            <div class="match-result-badge">
+              {{ match.result }}
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- OFFLINE TAB -->
+      <ng-container *ngIf="currentTab() === 'OFFLINE'">
+        <div class="epic-empty-state" *ngIf="offlineMatches().length === 0">
+          <div class="empty-icon"></div>
+          <h2 class="empty-title">SIN REGISTROS LOCALES</h2>
+          <p class="empty-desc">No has combatido contra la Inteligencia Artificial. Entrena offline para afilar tus estrategias.</p>
+          <button class="btn-epic-cta" routerLink="/battle">ENTRENAR VS IA</button>
+        </div>
+
+        <div class="matches-list" *ngIf="offlineMatches().length > 0">
+          <div class="match-row" *ngFor="let match of offlineMatches()" [class.victory]="match.result === 'VICTORIA'" [class.defeat]="match.result === 'DERROTA'" [class.draw]="match.result === 'EMPATE'">
+            
+            <div class="match-indicator"></div>
+            
+            <div class="match-main-info">
+              <div class="match-mode">{{ match.mode }}</div>
+              <div class="match-opponent">VS {{ match.opponentName | uppercase }}</div>
+            </div>
+            
+            <div class="match-details">
+              <div class="m-detail"><span class="m-lbl">TURNOS</span><span class="m-val">{{ match.turns }}</span></div>
+              <div class="m-detail"><span class="m-lbl">FECHA</span><span class="m-val">{{ match.date | date:'dd/MM/yyyy HH:mm' }}</span></div>
+            </div>
+
+            <div class="match-result-badge">
+              {{ match.result }}
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+
+    </main>
+
+  </div>
+
+</div>

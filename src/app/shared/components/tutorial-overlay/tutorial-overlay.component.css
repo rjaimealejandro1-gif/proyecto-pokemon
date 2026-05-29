@@ -1,0 +1,245 @@
+.tutorial-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  pointer-events: auto; /* Bloquea interacciones */
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* El fondo oscuro */
+.tutorial-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+}
+
+/* 
+  TRUCO DEL SPOTLIGHT: 
+  Un div sin fondo, pero con un box-shadow gigantesco que simula el oscurecimiento global.
+*/
+.spotlight-hole {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 10, 20, 0.85), 0 0 15px 2px #00e5ff inset;
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spotlight-hole.hidden {
+  opacity: 0;
+}
+
+/* Personaje */
+.character-container {
+  position: absolute;
+  bottom: 0;
+  height: 85vh;
+  z-index: 2;
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+
+.character-container.left {
+  left: 5%;
+  animation: slideInLeft 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.character-container.right {
+  right: 5%;
+  animation: slideInRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.holographic-character {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.4)) contrast(1.1) saturate(1.2);
+  animation: float 4s ease-in-out infinite, hologramFlicker 3s infinite linear;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes hologramFlicker {
+  0% { opacity: 1; }
+  95% { opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.4)); }
+  96% { opacity: 0.8; filter: hue-rotate(10deg) blur(1px); }
+  97% { opacity: 1; }
+  98% { opacity: 0.9; filter: blur(0px); }
+  100% { opacity: 1; }
+}
+
+/* Diálogo */
+.dialogue-hud {
+  position: absolute;
+  bottom: 5%;
+  width: 500px;
+  max-width: 90vw;
+  background: rgba(4, 13, 20, 0.85);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.15), inset 0 0 20px rgba(0, 229, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 4px;
+  padding: 24px;
+  z-index: 3;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+}
+
+/* Efecto de scanline sobre el diálogo */
+.dialogue-hud::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 229, 255, 0.03) 51%);
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+.hud-left {
+  left: 5%;
+  animation: slideUp 0.6s ease forwards 0.2s;
+  opacity: 0;
+}
+
+.hud-right {
+  right: 5%;
+  animation: slideUp 0.6s ease forwards 0.2s;
+  opacity: 0;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.dialogue-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  padding-bottom: 8px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #00e5ff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00e5ff;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.system-title {
+  color: #00e5ff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.dialogue-body {
+  min-height: 80px;
+}
+
+.typed-text {
+  color: #e0fbfc;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0;
+  text-shadow: 0 0 5px rgba(224, 251, 252, 0.3);
+}
+
+.cursor {
+  display: inline-block;
+  color: #00e5ff;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.dialogue-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+button {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  padding: 8px 16px;
+}
+
+.btn-skip {
+  color: rgba(224, 251, 252, 0.5);
+  font-size: 0.8rem;
+}
+
+.btn-skip:hover {
+  color: #e0fbfc;
+  text-shadow: 0 0 8px rgba(224, 251, 252, 0.5);
+}
+
+.btn-next {
+  color: #000;
+  background: #00e5ff;
+  border-radius: 2px;
+  font-size: 0.9rem;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.btn-next:hover {
+  background: #fff;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+}
+
+.arrow {
+  margin-left: 5px;
+}

@@ -1,0 +1,87 @@
+<div class="result-container" *ngIf="data">
+  <!-- Fondo animado con glow según resultado -->
+  <div class="background-glow" [class.glow-victory]="data.isVictory" [class.glow-defeat]="!data.isVictory"></div>
+  <div class="scanlines"></div>
+
+  <main class="result-content">
+    
+    <!-- HEADER CINEMATOGRÁFICO -->
+    <header class="result-header">
+      <h3 class="subtitle">REPORTE TÁCTICO</h3>
+      <h1 class="main-title" [class.text-victory]="data.isVictory" [class.text-defeat]="!data.isVictory">
+        {{ data.isVictory ? 'VICTORIA' : 'DERROTA' }}
+      </h1>
+      <div class="match-meta">
+        <span class="meta-item mode-badge">{{ data.mode }}</span>
+        <span class="meta-item opponent">VS {{ data.opponentName | uppercase }}</span>
+        <span class="meta-item date">{{ data.stats.startTime | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+    </header>
+
+    <!-- ESTADÍSTICAS -->
+    <section class="stats-grid">
+      
+      <!-- Card: Duración -->
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-info">
+          <span class="stat-label">DURACIÓN</span>
+          <span class="stat-value">{{ getDurationMinutes(data.stats.matchDurationMs) }}</span>
+        </div>
+      </div>
+
+      <!-- Card: Turnos -->
+      <div class="stat-card">
+        <div class="stat-icon">🔄</div>
+        <div class="stat-info">
+          <span class="stat-label">TURNOS JUGADOS</span>
+          <span class="stat-value">{{ data.stats.totalTurns }}</span>
+        </div>
+      </div>
+
+      <!-- Card: Daño Repartido -->
+      <div class="stat-card">
+        <div class="stat-icon">⚔️</div>
+        <div class="stat-info">
+          <span class="stat-label">DAÑO INFLIGIDO</span>
+          <span class="stat-value highlight-dmg">{{ data.isVictory ? data.stats.p1DamageDealt : data.stats.p2DamageDealt | number }}</span>
+        </div>
+      </div>
+
+      <!-- Card: Daño Recibido -->
+      <div class="stat-card">
+        <div class="stat-icon">🛡️</div>
+        <div class="stat-info">
+          <span class="stat-label">DAÑO RECIBIDO</span>
+          <span class="stat-value text-red">{{ data.isVictory ? data.stats.p2DamageDealt : data.stats.p1DamageDealt | number }}</span>
+        </div>
+      </div>
+
+      <!-- Card: Bajas (Destruidas) -->
+      <div class="stat-card">
+        <div class="stat-icon">💀</div>
+        <div class="stat-info">
+          <span class="stat-label">ENEMIGOS ABATIDOS</span>
+          <span class="stat-value">{{ data.isVictory ? data.stats.p1CardsDestroyed : data.stats.p2CardsDestroyed }}</span>
+        </div>
+      </div>
+
+      <!-- Card: Tropas Invocadas -->
+      <div class="stat-card">
+        <div class="stat-icon">🃏</div>
+        <div class="stat-info">
+          <span class="stat-label">CARTAS DESPLEGADAS</span>
+          <span class="stat-value">{{ data.isVictory ? data.stats.p1CardsPlayed : data.stats.p2CardsPlayed }}</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ACCIONES -->
+    <footer class="result-actions">
+      <button class="btn-action primary" routerLink="/dashboard">VOLVER AL HUB TÁCTICO</button>
+      <button class="btn-action secondary" routerLink="/history">VER HISTORIAL</button>
+    </footer>
+
+  </main>
+</div>

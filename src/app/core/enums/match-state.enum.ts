@@ -1,0 +1,6 @@
+export enum MatchState {
+  MENU = 'MENU',
+  MATCHMAKING = 'MATCHMAKING',
+  PLAYING = 'PLAYING',
+  FINISHED = 'FINISHED'
+}

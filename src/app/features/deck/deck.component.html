@@ -1,0 +1,186 @@
+<div class="deck-lab-universe" [class.modal-open]="inspectedCard() !== null">
+
+  <!-- ==========================================
+       TOP HUD (75% width aligns with Collection) 
+       ========================================== -->
+  <header class="lab-top-hud">
+    <div class="hud-left">
+      <button class="btn-tactical-back" routerLink="/">◀ SALIR</button>
+      <div class="hud-titles">
+        <h1 class="glow-text-cyan">LABORATORIO TÁCTICO</h1>
+        <span class="hud-version">PREPARACIÓN DE BARAJA</span>
+      </div>
+    </div>
+
+    <!-- Filtros de Colección integrados en el HUD -->
+    <div class="hud-controls" *ngIf="!playerStore.isLoading()">
+      <div class="tactical-search">
+        <span class="scan-icon"></span>
+        <input type="text" placeholder="RASTREAR CARTA..." [value]="inventorySearch()" (input)="onSearchChange($event)">
+      </div>
+
+      <div class="elemental-filters">
+        <button class="led-btn base-led" [class.active]="selectedType() === null" (click)="selectedType.set(null)">TODO</button>
+        <button class="led-btn" *ngFor="let type of availableTypes" 
+                [class.active]="selectedType() === type" 
+                (click)="selectedType.set(type)"
+                [style.--led-color]="getTypeColor(type)">
+          {{ getTypeNameSpanish(type) | uppercase }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="sync-status" [class.online]="playerStore.connectionMode() === 'online'">
+      <span>{{ playerStore.connectionMode() | uppercase }}</span>
+      <span *ngIf="playerStore.connectionMode() === 'online'" class="latency">{{ playerStore.avgSupabaseLatency() }}ms</span>
+    </div>
+  </header>
+
+  <!-- Loader Táctico -->
+  <div *ngIf="playerStore.isLoading()" class="hologram-loader">
+    <div class="loader-ring"></div>
+    <p class="loader-text">SINCRONIZANDO BASE DE DATOS...</p>
+  </div>
+
+  <div class="lab-workspace" *ngIf="!playerStore.isLoading()">
+    
+    <!-- ==========================================
+         ZONA CENTRAL: COLECCIÓN (75%)
+         ========================================== -->
+    <main class="collection-zone">
+      <div class="collection-grid" cdkDropList id="inventoryList" [cdkDropListConnectedTo]="['deckList']" [cdkDropListData]="filteredInventory()">
+        
+        <div class="hologram-card-slot" 
+             *ngFor="let card of filteredInventory()" 
+             cdkDrag [cdkDragData]="card" 
+             (click)="inspectedCard.set(card)">
+          <app-card-view [card]="card"></app-card-view>
+          
+          <!-- Badge táctico flotante -->
+          <div class="tech-count-badge" *ngIf="getQuantityInDeck(card.id) > 0" [class.maxed]="getQuantityInDeck(card.id) === 4">
+            {{ getQuantityInDeck(card.id) }} / 4
+          </div>
+        </div>
+
+        <div *ngIf="filteredInventory().length === 0" class="empty-col-msg">NINGÚN REGISTRO ENCONTRADO</div>
+      </div>
+    </main>
+
+    <!-- ==========================================
+         ZONA LATERAL: MAZO ACTIVO (25%)
+         ========================================== -->
+    <aside class="active-deck-zone" id="tut-deck-list">
+      
+      <!-- Controles Superiores del Mazo -->
+      <div class="deck-top-controls">
+        <select class="tactical-select" [value]="playerStore.selectedDeckId()" (change)="onSelectDeck($any($event.target).value)">
+          <option *ngFor="let d of playerStore.decks()" [value]="d.id">{{ d.name }}</option>
+        </select>
+        
+        <div class="deck-action-btns">
+          <button class="btn-tech-icon" (click)="onCreateNewDeck()" title="Crear Baraja">➕</button>
+          <button class="btn-tech-icon danger" (click)="onDeleteDeck()" [disabled]="playerStore.decks().length <= 1" title="Eliminar Baraja">🗑️</button>
+        </div>
+      </div>
+
+      <!-- Nombre del Mazo Editable -->
+      <div class="deck-rename-box">
+        <input [value]="deckName()" (input)="onDeckNameChange($event)" placeholder="DESCRIPCIÓN DE LA BARAJA">
+        <button class="btn-tech-save" (click)="onRenameDeck()">ACTUALIZAR</button>
+      </div>
+
+      <!-- Contador de Cartas Táctico -->
+      <div class="deck-tech-counter" [class.complete]="activeDeckCards().length === 20">
+        <div class="dt-header">
+          <span class="dt-lbl">CAPACIDAD DEL MAZO</span>
+          <span class="dt-val">{{ activeDeckCards().length }} <span class="dt-max">/ 20</span></span>
+        </div>
+        <div class="dt-bar-bg">
+          <div class="dt-bar-fill" [style.width.%]="(activeDeckCards().length / 20) * 100"></div>
+        </div>
+      </div>
+
+      <!-- Lista de Cartas: SLICE CARDS -->
+      <div class="slice-cards-list" cdkDropList id="deckList" [cdkDropListConnectedTo]="['inventoryList']" (cdkDropListDropped)="onDrop($event)">
+        
+        <div class="slice-card" *ngFor="let card of groupedDeckCards()" cdkDrag [cdkDragData]="card.details" (click)="inspectedCard.set(card.details)">
+          <!-- El fondo usa un gradiente oscuro con un borde fino del color del tipo -->
+          <div class="slice-bg-color" [style.background-color]="getTypeColor(card.details.type)"></div>
+          
+          <div class="slice-cost">
+            <span class="sc-icon">💎</span> {{ card.details.cost || 0 }}
+          </div>
+          
+          <div class="slice-info">
+            <span class="sc-name">{{ card.details.name | uppercase }}</span>
+          </div>
+
+          <div class="slice-qty">x{{ card.quantity }}</div>
+          
+          <button class="btn-slice-remove" (click)="quickRemove(card.details, $event)">✖</button>
+        </div>
+        
+        <div *ngIf="groupedDeckCards().length === 0" class="empty-deck-tactical">
+          <span class="scan-icon-large"></span>
+          <p>ARRASTRA CARTAS AQUÍ PARA FORMAR EL MAZO</p>
+        </div>
+      </div>
+      
+    </aside>
+  </div>
+
+  <!-- ==========================================
+       MODAL CINEMÁTICO CENTRAL (INSPECTOR)
+       ========================================== -->
+  <div class="inspector-modal-backdrop" *ngIf="inspectedCard() as card" (click)="inspectedCard.set(null)">
+    <div class="inspector-modal-content" (click)="$event.stopPropagation()">
+      
+      <button class="btn-modal-close" (click)="inspectedCard.set(null)">✖</button>
+
+      <!-- Izquierda: Proyección de la Carta Gigante -->
+      <div class="modal-card-display">
+        <app-card-view [card]="card"></app-card-view>
+      </div>
+
+      <!-- Derecha: Datos Tácticos y Controles -->
+      <div class="modal-card-data">
+        <h2 class="mc-name" [style.color]="getTypeColor(card.type)">{{ card.name | uppercase }}</h2>
+        <div class="mc-badges">
+          <span class="mc-rarity" [class]="card.rarity.toLowerCase()">{{ getRarityName(card.rarity) | uppercase }}</span>
+          <span class="mc-type" [style.color]="getTypeColor(card.type)">{{ getTypeNameSpanish(card.type) | uppercase }}</span>
+        </div>
+
+        <div class="mc-stats-grid">
+          <div class="mc-stat-box hp">
+            <span class="mc-lbl">HP</span>
+            <span class="mc-val text-green">{{ card.hp }}</span>
+          </div>
+          <div class="mc-stat-box atk">
+            <span class="mc-lbl">ATK</span>
+            <span class="mc-val text-red">{{ card.attack }}</span>
+          </div>
+          <div class="mc-stat-box def">
+            <span class="mc-lbl">DEF</span>
+            <span class="mc-val text-cyan">{{ card.defense }}</span>
+          </div>
+        </div>
+
+        <div class="mc-deck-status">
+          <div class="mds-text">ESTADO EN EL MAZO</div>
+          <div class="mds-count" [class.maxed]="getQuantityInDeck(card.id) === 4">{{ getQuantityInDeck(card.id) }} / 4</div>
+        </div>
+
+        <div class="mc-actions">
+          <button class="btn-giant add" (click)="addToDeck(card)" [disabled]="activeDeckCards().length >= 20 || getQuantityInDeck(card.id) >= 4">
+            AÑADIR AL MAZO
+          </button>
+          <button class="btn-giant remove" (click)="removeFromDeck(card)" [disabled]="getQuantityInDeck(card.id) === 0">
+            QUITAR
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

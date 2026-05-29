@@ -1,0 +1,129 @@
+<div class="launcher-wrapper">
+  
+  <!-- HUD Superior (Perfil minimalista estilo videojuego) -->
+  <header class="game-hud" *ngIf="playerStore.profile() as user">
+    <div class="hud-left">
+      <div class="hud-logo">BATTLE<span class="text-cyan">ARENA</span></div>
+    </div>
+    
+    <div class="hud-right">
+      <div class="player-hud-info">
+        <div class="hud-stats">
+          <span class="hud-stat-item">NIVEL <span class="hud-value">{{ user.level }}</span></span>
+          <span class="hud-stat-item">WR <span class="hud-value text-cyan">{{ playerStore.winRate() }}%</span></span>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-profile-name">
+          <div class="status-dot online"></div>
+          <span class="player-name">{{ user.username | uppercase }}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Menú Principal (Tipográfico, alineado a la izquierda) -->
+  <nav class="game-main-menu">
+    <ul class="menu-list">
+      <li class="menu-item primary">
+        <button id="tut-btn-online" class="menu-btn" (click)="openDeckSelector('online')">
+          <span class="menu-text">JUGAR ONLINE</span>
+          <span class="menu-subtext">Matchmaking Competitivo</span>
+        </button>
+      </li>
+      <li class="menu-item">
+        <button class="menu-btn" (click)="openDeckSelector('ia')">
+          <span class="menu-text">ENTRENAMIENTO</span>
+          <span class="menu-subtext">Práctica vs IA</span>
+        </button>
+      </li>
+      <li class="menu-item">
+        <button class="menu-btn" routerLink="/deck">
+          <span class="menu-text">MAZOS</span>
+          <span class="menu-subtext">Constructor Estratégico</span>
+        </button>
+      </li>
+      <li class="menu-item">
+        <button id="tut-btn-collection" class="menu-btn" routerLink="/cards">
+          <span class="menu-text">COLECCIÓN</span>
+          <span class="menu-subtext">Enciclopedia de Cartas</span>
+        </button>
+      </li>
+      <li class="menu-item">
+        <button class="menu-btn" routerLink="/history">
+          <span class="menu-text">HISTORIAL</span>
+          <span class="menu-subtext">Registro de Batallas</span>
+        </button>
+      </li>
+      <li class="menu-item">
+        <button class="menu-btn" routerLink="/leaderboard">
+          <span class="menu-text">LEADERBOARD</span>
+          <span class="menu-subtext">Ranking Global</span>
+        </button>
+      </li>
+      <li class="menu-item">
+        <button id="tut-btn-manual" class="menu-btn" routerLink="/rules">
+          <span class="menu-text">MANUAL DEL DUELISTA</span>
+          <span class="menu-subtext">Holographic Tactical Guide</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Overlay para gradiente izquierdo (mejora legibilidad del menú sin ensuciar todo el fondo) -->
+  <div class="menu-gradient-backdrop"></div>
+
+  <!-- Modal Cinemático: Selector de Mazos -->
+  <div class="cinematic-overlay" *ngIf="isDeckSelectorOpen()">
+    <div class="deck-modal">
+      <div class="modal-header-elegant">
+        <h2>DESPLIEGUE TÁCTICO</h2>
+        <p>Selecciona la baraja para la contienda</p>
+        <button class="btn-close-elegant" (click)="closeDeckSelector()">CERRAMIENTO</button>
+      </div>
+      
+      <div class="deck-grid-selector">
+        <div class="tactical-deck-card" 
+             *ngFor="let d of playerStore.decks()"
+             [class.active]="deckToSelectId() === d.id"
+             [class.incomplete]="d.cards.length !== 20"
+             (click)="onSelectDeckInModal(d.id)">
+          
+          <div class="deck-card-content">
+            <span class="t-deck-name">{{ d.name | uppercase }}</span>
+            <div class="t-deck-status">
+              <span class="status-bar" [style.width]="(d.cards.length / 20) * 100 + '%'" [class.full]="d.cards.length === 20"></span>
+              <span class="status-text">{{ d.cards.length }} / 20 CARTAS</span>
+            </div>
+          </div>
+          
+          <div class="active-indicator"></div>
+        </div>
+      </div>
+
+      <div class="modal-footer-elegant">
+        <button class="btn-launch-tactical" 
+                [disabled]="!canLaunch()" 
+                (click)="launchBattle()">
+          <span class="btn-scanline"></span>
+          <span class="btn-text">{{ canLaunch() ? 'INICIAR COMBATE' : 'BARAJA INCOMPLETA' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cinemático: Matchmaking -->
+  <div class="cinematic-overlay" *ngIf="gameStore.appState() === MatchState.MATCHMAKING">
+    <div class="matchmaking-hud">
+      <div class="radar-container">
+        <div class="radar-sweep"></div>
+      </div>
+      <div class="mm-status">
+        <h2 class="glitch-text" data-text="RASTREANDO OPONENTE">RASTREANDO OPONENTE</h2>
+        <p class="mm-sub">Conectando a red neuronal Supabase</p>
+        <div class="mm-ping">LATENCIA: <span class="text-cyan">{{ playerStore.avgSupabaseLatency() }}ms</span></div>
+      </div>
+      <button class="btn-abort" (click)="cancelMatchmaking()">ABORTAR</button>
+    </div>
+  </div>
+
+</div>
